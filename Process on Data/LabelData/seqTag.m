@@ -23,11 +23,11 @@ summ = 0;
 deviceIndx = find(acceptableDevices);
 summary = cell(sum(acceptableDevices), 4);
 tic
-if(~exist('5Min.mat', 'file'))
-    for j=1:sum(acceptableDevices)
+if(exist('5Min.mat', 'file'))
+    for j=76:sum(acceptableDevices)
         userBatSeq = combineUserRecords(dataset{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
         summ = sum(userBatSeq(:, 6) == 2);
-        [charge, discharge, originalBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, granularity, dataset{deviceIndx(j), batCol}); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
+        [charge, discharge, originalBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, 3, dataset{deviceIndx(j), batCol}); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
     %     summary{j, 1} = charge;
     %     summary{j, 2} = discharge;
     %     summary{j, 3} = originalBatSeq;
@@ -37,10 +37,10 @@ if(~exist('5Min.mat', 'file'))
         fprintf('%d\n', j);
     end
 else
-%     load('10Min.mat');
+    load('10Min.mat');
 %     load('5Min.mat');
-    load('10MinRefined.mat');
-    HMMmodel = genHMM(tenMinRefined, granularity, 1);
+%     load('10MinRefined.mat');
+    HMMmodel = genHMM(tenMin, granularity, 1);
 end
 toc
 dataset = summary;

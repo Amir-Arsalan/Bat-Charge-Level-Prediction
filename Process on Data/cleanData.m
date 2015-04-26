@@ -45,27 +45,44 @@ there are more than one day of data not recorded then the following
 algorithm will fail to do its job
 %}
 dayNum = 1;
-flag = 0;
+flag = 0; %Will be used to signal for start of a new day
 days = ones(length(userBatSeq(:, 1)), 1);
 i = 2;
 % for i=2:length(userBatSeq(:, 1))
 while(i <= length(userBatSeq(:, 1)))
     time1 = userBatSeq(i-1, 1) * 60 + userBatSeq(i - 1, 2);
     time2 = userBatSeq(i, 1) * 60 + userBatSeq(i, 2);
-    if(abs(userBatSeq(i - 1, 5) - userBatSeq(i, 5)) >= 4)
+    if(abs(userBatSeq(i - 1, 5) - userBatSeq(i, 5)) >= 4) %If the charge level difference is more than 4%
         for j=i+1:min(i+6, length(userBatSeq(:, 1)))
-            tempTime = userBatSeq(j, 1) * 60 + userBatSeq(j, 2);
+            tempTime = userBatSeq(j, 1) * 60 + userBatSeq(j, 2); %Time of each record in minutes
            if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) >= 4 || tempTime < time1)
 %               flag = 1;
            end
            if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) > 4)
               flag = 1;
            elseif(abs(tempTime - time1) <= 10 && abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) <= 4)
-               userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
-               days = [days(1:i-1, :); days(j:end, :)];
-               flag = 0;
-               break;
+               if(tempTime > time2 && tempTime - time1 <= 500)
+                   flag = 0;
+                   break;
+               elseif(tempTime < time2)
+                   flag = 1;
+                   break;
+               else
+                   userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
+                   days = [days(1:i-1, :); days(j:end, :)];
+                   flag = 0;
+                   break;
+               end
            end
+%            if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) > 4)
+%               flag = 1;
+%            end
+%            if(tempTime - time1 >= 1)
+%                userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
+%                days = [days(1:i-1, :); days(j:end, :)];
+%                flag = 0;
+%                break;
+%            end
         end
         if(flag == 1)
             tempTime = userBatSeq(i + 1, 1) * 60 + userBatSeq(j, 2);
@@ -80,7 +97,10 @@ while(i <= length(userBatSeq(:, 1)))
     if(time1 > time2 || flag == 1)
         dayNum = dayNum + 1;
     end
-    if(dayNum == 66)
+    if(dayNum == 108)
+        
+    end
+    if(i == 1680)
         
     end
     flag = 0;

@@ -28,7 +28,6 @@ flag = false;
 sameIntervalRecords = 0;
 globalChargeRate = 0;
 
-
 %% The Program's Code Section
 
 startInterval = findTimeInterval(userBatSeq(1, :), granularity);
@@ -168,12 +167,24 @@ while(i <= length(userBatSeq(:, 1)))
                     else
                         if(newUserBatSeq(intervalIndex, 6) > userBatSeq(i, 6)) %For the discharge period
                             tempRechargeRate = -normrnd((10/(10/granularity)) - granularity/10, granularity/8); %For the mean, the numerator in the first paranthesis represents the 'assumed' charge level at each 10-minute interval. For Sigma the denominator helps the standard deviation get smaller and larger as granularity decreases or increases respectively
-                            if(newUserBatSeq(k - 1, 7) == 1 && newUserBatSeq(k - 1, 6) - tempRechargeRate <= 100) %Description of why I have put this condition and the one after this here: Although the i'th record indicates that the battery must be in discharge period but since the battery is being charged, I proceed charging the battery to 100% and then the discharge period begins
-                                newUserBatSeq(k, 6) = newUserBatSeq(k - 1, 6) - tempRechargeRate;
-                                globalChargeRate = tempRechargeRate;
-                                newUserBatSeq(k, 9) = tempRechargeRate;
+                            %Description of the two following conditions: Although the i'th record indicates that the battery must be in discharge period but since the battery is being charged, I proceed charging the battery to 100% and then the discharge period begins
+                            if(newUserBatSeq(k - 1, 7) == 1 && newUserBatSeq(k - 1, 6) - tempRechargeRate <= 100 && flag ~= 2)
                                 newUserBatSeq(k, 7) = 1;
-                                flag = 1;
+%                                 if((100 - tempStats(3)) / (intervalDifference - round(-(100 - newUserBatSeq(k-1, 6)) / tempRechargeRate) + 1) < normrnd(5, 1.2)) %This condition prevents the discharge rate going too high after the phone's battery level is reached to 100%.
+                                if((newUserBatSeq(k - 1, 6) - tempRechargeRate - tempStats(3)) / (interval - startInterval) < normrnd(4.8/(10/granularity), 0.8)) %This condition prevents the discharge rate going too high after the phone's battery level is reached to 100%.
+                                    flag = 1;
+                                    newUserBatSeq(k, 6) = newUserBatSeq(k - 1, 6) - tempRechargeRate;
+                                    globalChargeRate = tempRechargeRate;
+                                    newUserBatSeq(k, 9) = tempRechargeRate;
+                                else %If the discharge rate goes too high, then stop charging the phone
+                                    flag = 2;
+                                    newUserBatSeq(k, 6) = min(100, newUserBatSeq(k - 1, 6) - (tempRechargeRate / 1.7)); %1.7 is defined arbitrarly
+                                    intervalDifference = interval - startInterval;
+                                    chargeRate = (newUserBatSeq(k, 6) - tempStats(3)) / intervalDifference; %Recharge if negative, discharge if positive
+                                    chargeRate1 = (newUserBatSeq(k, 6) - userBatSeq(i, 6)) / intervalDifference; %Recharge if negative, discharge if positive
+                                    globalChargeRate = (newUserBatSeq(k, 6) - userBatSeq(i, 6)) / intervalDifference;
+                                    intervalIndex = k;
+                                end
                             elseif(newUserBatSeq(k - 1, 7) == 1 && newUserBatSeq(k - 1, 6) - tempRechargeRate > 100 && flag ~= 2)
                                 newUserBatSeq(k, 6) = 100;
                                 newUserBatSeq(k, 7) = 1;
@@ -221,13 +232,24 @@ while(i <= length(userBatSeq(:, 1)))
                                 newUserBatSeq(k, 9) = chargeRate;
                                 newUserBatSeq(k, 7) = 1;
                                 flag = 1;
-                            elseif(newUserBatSeq(k - 1, 6) - tempRechargeRate <= 100 && newUserBatSeq(k - 1, 7) == 1 && (100 - 24) / round(intervalDifference + ((100 - newUserBatSeq(intervalIndex, 6)) / -(10/(10/granularity)) - granularity/10)) <= 20/(10/granularity)) %The condition "(100 - tempStats(3)) / max(1, round(intervalDifference + ((100 - newUserBatSeq(intervalIndex, 6)) / tempRechargeRate))) < 18/(10/granularity)" is there to ensure that the discharge rate is not going to be extremely high, and therefore impossible after the phone's charge level reaches to 100 and starts dropping to the value "tempStats(3)"
-                                newUserBatSeq(k, 6) = newUserBatSeq(k - 1, 6) - tempRechargeRate;
-                                globalChargeRate = tempRechargeRate;
-                                newUserBatSeq(k, 9) = tempRechargeRate;
+%                             elseif(newUserBatSeq(k - 1, 6) - tempRechargeRate <= 100 && newUserBatSeq(k - 1, 7) == 1 && (100 - tempStats(3)) / round(intervalDifference + ((100 - newUserBatSeq(intervalIndex, 6)) / -(10/(10/granularity)) - granularity/10)) <= 20/(10/granularity)) %The condition "(100 - tempStats(3)) / max(1, round(intervalDifference + ((100 - newUserBatSeq(intervalIndex, 6)) / tempRechargeRate))) < 18/(10/granularity)" is there to ensure that the discharge rate is not going to be extremely high, and therefore impossible after the phone's charge level reaches to 100 and starts dropping to the value "tempStats(3)"
+                                elseif(newUserBatSeq(k - 1, 6) - tempRechargeRate <= 100 && newUserBatSeq(k - 1, 7) == 1 && flag ~= 2)
                                 newUserBatSeq(k, 7) = 1;
-                                flag = 1;
-                            elseif(newUserBatSeq(k - 1, 6) - tempRechargeRate > 100 && newUserBatSeq(k - 1, 7) == 1)
+                                if((newUserBatSeq(k - 1, 6) - tempRechargeRate - tempStats(3)) / (interval - startInterval) < normrnd(4.8/(10/granularity), 0.8)) %This condition prevents the discharge rate going too high after the phone's battery level is reached to 100%.
+                                    newUserBatSeq(k, 6) = newUserBatSeq(k - 1, 6) - tempRechargeRate;
+                                    globalChargeRate = tempRechargeRate;
+                                    newUserBatSeq(k, 9) = tempRechargeRate;
+                                    flag = 1;
+                                else %If the discharge rate goes too high, then stop charging the phone
+                                    flag = 2;
+                                    newUserBatSeq(k, 6) = min(100, newUserBatSeq(k - 1, 6) - (tempRechargeRate / 1.7)); %1.7 is defined arbitrarly
+                                    intervalDifference = interval - startInterval;
+                                    chargeRate = (newUserBatSeq(k, 6) - tempStats(3)) / intervalDifference; %Recharge if negative, discharge if positive
+                                    chargeRate1 = (newUserBatSeq(k, 6) - userBatSeq(i, 6)) / intervalDifference; %Recharge if negative, discharge if positive
+                                    globalChargeRate = (newUserBatSeq(k, 6) - userBatSeq(i, 6)) / intervalDifference;
+                                    intervalIndex = k;
+                                end
+                            elseif(newUserBatSeq(k - 1, 6) - tempRechargeRate > 100 && newUserBatSeq(k - 1, 7) == 1 && flag ~= 2)
                                 newUserBatSeq(k, 6) = 100;
                                 globalChargeRate = 0;
                                 newUserBatSeq(k, 7) = 1;
@@ -262,10 +284,10 @@ while(i <= length(userBatSeq(:, 1)))
                     end
                 end
                 if(flag == 0)
-                    if(chargeRate > 0) %globalChargeRate???????????
-                        if(abs(newUserBatSeq(k, 6) - tempStats(3)) >= 5 && newUserBatSeq(k, 6) >= tempStats(3) && intervalDifference >= round(1440/granularity * 0.06))
+                    if(globalChargeRate > 0) %globalChargeRate???????????
+                        if(abs(newUserBatSeq(k, 6) - tempStats(3)) >= 5 && newUserBatSeq(k, 6) >= tempStats(3) && intervalDifference >= round(1440/granularity * 0.07))
                            newUserBatSeq(k, 7) = 0; %Discharge
-                        elseif(abs(newUserBatSeq(k, 6) - tempStats(3)) >= 5 && newUserBatSeq(k, 6) <= tempStats(3) && intervalDifference >= round(1440/granularity * 0.06))
+                        elseif(abs(newUserBatSeq(k, 6) - tempStats(3)) >= 5 && newUserBatSeq(k, 6) <= tempStats(3) && intervalDifference >= round(1440/granularity * 0.07))
                             newUserBatSeq(k, 7) = 1; %Recharge
                         elseif(newUserBatSeq(intervalIndex, 7) ~= tempStats(4))
                             newUserBatSeq(k, 7) = tempStats(4);
@@ -330,7 +352,7 @@ while(i <= length(userBatSeq(:, 1)))
     sameIntervalRecords = 0;
     flag = 0;
     flagFill = 0;
-    if(i >= 20720)
+    if(i >= 11719) %For test purposes
         
     end
 end
@@ -437,7 +459,7 @@ while(i <= length(newUserBatSeq(:, 1)) - 1)
             tempIndx = 1;
             if(j - i > 1)
                 while(j > 0 && j >= i)
-                   if(newUserBatSeq(j - tempIndx + 1, 6) + tempRechargeRate(tempIndx) >= newUserBatSeq(max(1, i - 1), 6))
+                   if(newUserBatSeq(max(1, j - tempIndx + 1), 6) + tempRechargeRate(tempIndx) >= newUserBatSeq(max(1, i - 1), 6))
                        newUserBatSeq(j - tempIndx, 6) = newUserBatSeq(j - tempIndx + 1, 6) + tempRechargeRate(tempIndx);
                        newUserBatSeq(j - tempIndx, 7) = 1;
                    else

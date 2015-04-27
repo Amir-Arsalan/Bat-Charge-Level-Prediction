@@ -1,8 +1,7 @@
-function [charge, discharge, originalBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, granularity, Dataset)
+function [charge, discharge, timeIrregularBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, granularity)
         
-        userBatSeq = single(userBatSeq);
-        userBatSeq = cleanData(userBatSeq, 4, false, Dataset); %Note that the returned data set has an additional column "days" containing the number of day in which the data has been recorded
-        originalBatSeq = userBatSeq;
+        userBatSeq = cleanData(userBatSeq, 4, false);
+        timeIrregularBatSeq = userBatSeq;
         userBatSeq = applyGranularity(userBatSeq, granularity); %Apply the requested time-granularity on the userBatSeq records
         timeGranulatedBatSeq = userBatSeq;
         

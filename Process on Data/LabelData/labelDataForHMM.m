@@ -1,13 +1,12 @@
 function [labeledDataset, usersIndex] = labelDataForHMM(usersData, granularity, mode)
 
 %{
-This function creates a markov model with two state transition matrices:
-One for discharge period and one for charging period. Each transition
-matrix come along with an emission marix of charge/discharge rate
+This function creates a markov model for the provided data set. It uses
+100% of the data set as training set at the moment!
 
 Inputs:
-usersData: All users data
-mode: The model to be learned over the data
+usersData: A cell containing all users data records
+mode: Specified the type of model to be learned over the data
 %}
 
 %% Finding users with useless data
@@ -17,7 +16,7 @@ almost 100% idle)
 %}
 
 labeledDataset = [];
-invalidDatasetsIndices = false(size(usersData, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
+noisyDatasetsIndices = false(size(usersData, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
 temp = zeros(size(usersData, 1), 3);
 for i=1:size(usersData, 1)
     singleUserData = usersData{i, 2};
@@ -25,15 +24,16 @@ for i=1:size(usersData, 1)
     temp(i, 1) = size(usersData{i, 1}, 1) / size(singleUserData, 1); %The ratio of 
     temp(i, 2) = sum(singleUserData(:, 8))/size(singleUserData, 1); %The ratio of sum of "existing" records to "all" records
     temp(i, 3) = sum(singleUserData(:, end) == 0) / size(singleUserData, 1);
-    invalidDatasetsIndices(i) = singleUserData(end, 1) < 100 && (temp(i, 2) < .25 || temp(i, 3) > .38);
+    noisyDatasetsIndices(i) = singleUserData(end, 1) < 100 && (temp(i, 2) < .25 || temp(i, 3) > .38);
 end
 
-validDatasets = cell(sum(~invalidDatasetsIndices), 2);
-indices = find(~invalidDatasetsIndices);
-for i=1:sum(~invalidDatasetsIndices)
+validDatasets = cell(sum(~noisyDatasetsIndices), 2);
+indices = find(~noisyDatasetsIndices);
+for i=1:sum(~noisyDatasetsIndices)
     validDatasets{i, 1} = usersData{indices(i), 1};
     validDatasets{i, 2} = usersData{indices(i), 2};
 end
+
 
 %% The main program starts here
 if(mode == 1) %Tag each single record (No hierarchical model)
@@ -107,6 +107,7 @@ if(mode == 1) %Tag each single record (No hierarchical model)
     
     dischargeIndices = find(allUsersData(:, 7) == 0);
     rechargeIndices = find(allUsersData(:, 7) == 1);
+    
 %     disIndxTemp = false(length(dischargeIndices), 1);
 %     reIndxTemp = false(length(rechargeIndices), 1);
 %     j = 1;

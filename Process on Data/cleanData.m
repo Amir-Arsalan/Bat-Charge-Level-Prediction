@@ -1,4 +1,4 @@
-function userBatSeq = cleanData(userBatSeq, iterations, duplicate, Dataset)
+function userBatSeq = cleanData(userBatSeq, iterations, duplicate)
 %This function does pre-processing on the set of input records as follow:
 %{
 1- Replaces charging status by 0 or 1 depending on previous rows and
@@ -44,73 +44,53 @@ Check the possibility of not recording any data for more than two days. If
 there are more than one day of data not recorded then the following
 algorithm will fail to do its job
 %}
-dayNum = 1;
-flag = 0; %Will be used to signal for start of a new day
-days = ones(length(userBatSeq(:, 1)), 1);
-i = 2;
-% for i=2:length(userBatSeq(:, 1))
-while(i <= length(userBatSeq(:, 1)))
-    time1 = userBatSeq(i-1, 1) * 60 + userBatSeq(i - 1, 2);
-    time2 = userBatSeq(i, 1) * 60 + userBatSeq(i, 2);
-    if(abs(userBatSeq(i - 1, 5) - userBatSeq(i, 5)) >= 4) %If the charge level difference is more than 4%
-        for j=i+1:min(i+6, length(userBatSeq(:, 1)))
-            tempTime = userBatSeq(j, 1) * 60 + userBatSeq(j, 2); %Time of each record in minutes
-           if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) >= 4 || tempTime < time1)
-%               flag = 1;
-           end
-           if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) > 4)
-              flag = 1;
-           elseif(abs(tempTime - time1) <= 10 && abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) <= 4)
-               if(tempTime > time2 && tempTime - time1 <= 500)
-                   flag = 0;
-                   break;
-               elseif(tempTime < time2)
-                   flag = 1;
-                   break;
-               else
-                   userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
-                   days = [days(1:i-1, :); days(j:end, :)];
-                   flag = 0;
-                   break;
-               end
-           end
+% dayNum = 1;
+% flag = 0; %Will be used to signal for start of a new day
+% days = ones(length(userBatSeq(:, 1)), 1);
+% i = 2;
+% while(i <= length(userBatSeq(:, 1)))
+%     time1 = userBatSeq(i-1, 1) * 60 + userBatSeq(i - 1, 2);
+%     time2 = userBatSeq(i, 1) * 60 + userBatSeq(i, 2);
+%     if(abs(userBatSeq(i - 1, 5) - userBatSeq(i, 5)) >= 4) %If the charge level difference is more than 4%
+%         for j=i+1:min(i+6, length(userBatSeq(:, 1)))
+%             tempTime = userBatSeq(j, 1) * 60 + userBatSeq(j, 2); %Time of each record in minutes
 %            if(abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) > 4)
 %               flag = 1;
+%            elseif(tempTime - time1 > 0 && tempTime - time1 <= 10 && abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) <= 4)
+%                if(tempTime > time2 && tempTime - time1 <= 500 && abs(userBatSeq(i - 1, 5) - userBatSeq(j, 5)) > 4)
+%                    flag = 0;
+%                    break;
+%                elseif(tempTime < time2)
+%                    flag = 1;
+%                    break;
+%                else
+%                    userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
+%                    days = [days(1:i-1, :); days(j:end, :)];
+%                    flag = 0;
+%                    break;
+%                end
 %            end
-%            if(tempTime - time1 >= 1)
-%                userBatSeq = [userBatSeq(1:i-1, :); userBatSeq(j:end, :)];
-%                days = [days(1:i-1, :); days(j:end, :)];
-%                flag = 0;
-%                break;
-%            end
-        end
-        if(flag == 1)
-            tempTime = userBatSeq(i + 1, 1) * 60 + userBatSeq(j, 2);
-            if(round(std(userBatSeq(i-1:min(i+5, length(userBatSeq(:, 1))), 5))) <= 5 || time2 >= time1)
-                flag = 0;
-            end
-            if(round(std(userBatSeq(i-1:min(i+5, length(userBatSeq(:, 1))), 5))) <= 5 || tempTime >= time1)
+%         end
+%         if(flag == 1)
+%             if(round(std(userBatSeq(i-1:min(i+5, length(userBatSeq(:, 1))), 5))) <= 5 || time2 >= time1)
 %                 flag = 0;
-            end
-        end
-    end
-    if(time1 > time2 || flag == 1)
-        dayNum = dayNum + 1;
-    end
-    if(dayNum == 108)
-        
-    end
-    if(i == 1680)
-        
-    end
-    flag = 0;
+%             end
+%         end
+%     end
+%     if(time1 > time2 || flag == 1)
+%         dayNum = dayNum + 1;
+%     end
+%     flag = 0;
+% 
+%     days(i) = dayNum;
+%     i = i + 1;
+% end
 
-    days(i) = dayNum;
-    i = i + 1;
-end
-
-userBatSeq = [days, userBatSeq];
+% userBatSeq = [days, userBatSeq];
+userBatSeq = [userBatSeq(:, end), userBatSeq(:, 1:end-1)]; %Use the day numbers generated directly from the raw data set
 clear dayNum days
+% fprintf('Match: %d, Calculated: %d, Definite: %d\n', all(userBatSeq(:, 1) == userBatSeq(:, end)), userBatSeq(end, 1), userBatSeq(end, end))
+% userBatSeq(:, end) = [];
 
 %% This part deals with disconnectivy issues of charger/socket causing 0s and 1 repeat for the "being charged" attribute
 i = 1;
@@ -156,28 +136,12 @@ clear timeDiff2 chargeLvlDiff2 dayDiff2
 
 %% Find any abnormal change in the battery charge level and fix them
 
-abnorms1 = []; %Stores indices of records showing a sign of phone shut down/die out
-abnorms2 = []; %
-abnorms3 = [];
-abnorms4 = []; %Stores indices of records for when the charge level increases without the phone being charged
-abnorms5 = [];
 zeroIndex = 0;
-% for i=1:length(userBatSeq(:, 1))-1
 i = 1;
-
-%battery charge levels must not be averaged if the phone is fully charged
-
-%battery charge levels must be averaged if there are more records of phone charging after
-
-%battery charge level must be adjusted if there are more records of phone
-%charging after (exeption for the time that the battery charge level
-%decreases and does not increase to the charge level before starting to
-%decrease)
 while(i <= length(userBatSeq(:, 1))-1)
     dayDiff = double(userBatSeq(i + 1, 1)) - double(userBatSeq(i, 1));
     timeDiff = ((dayDiff * 24 + double(userBatSeq(i + 1, 2))) * 60 + double(userBatSeq(i + 1, 3))) - (double(userBatSeq(i, 2)) * 60 + double(userBatSeq(i, 3))); % In minutes
     chargeLvlDiff = userBatSeq(i, 6) - userBatSeq(i + 1, 6);
-    
     
     %This section merges records having the same battery charge level when
     %the phone is being charged)
@@ -223,7 +187,6 @@ while(i <= length(userBatSeq(:, 1))-1)
        end
     end
     
-    
     %Detects when the battery charge level increases (due to noise) when the phone is not being charged
     chargeLvlDiff = userBatSeq(i, 6) - userBatSeq(i + 1, 6);
     if(i <= size(userBatSeq, 1)-1 && chargeLvlDiff < 0 && chargeLvlDiff >= -1 && userBatSeq(i, 7) == 0 && userBatSeq(i + 1, 7) == 0) %The 2nd condition (chargeLvlDiff >= -1) is there because sometimes the phone turns off and the difference between two consecutive records will be more than 2 percent (-2%) when the phone is turned back on
@@ -253,7 +216,6 @@ while(i <= length(userBatSeq(:, 1))-1)
            tempIndex = tempIndex + 1;
        end
         %% This code snippet computes a new time stamp to be used for the time stamp of the new record to be replaced with all continuous records having the same battery charge level
-        abnorms3 = [abnorms3; i];
         dayDiff2 = double(userBatSeq(lastIndex, 1)) - double(userBatSeq(i, 1));
         timeDiff2 = ((dayDiff2 * 24 + double(userBatSeq(lastIndex, 2))) * 60 + double(userBatSeq(lastIndex, 3))) - (double(userBatSeq(i, 2)) * 60 + double(userBatSeq(i, 3))); % In minutes
         timeDiff2 = timeDiff2 / 2;
@@ -429,12 +391,7 @@ while(i <= length(userBatSeq(:, 1))-1)
         i = 1;
         zeroIndex = 0;
     end
-    if(i >= 7468)
-        
-    end
 end
-
-% userBatSeq = cleanData(userBatSeq, 2, true);
 
 clear abnorms1 abnorms2 dayDiff timeDiff chargeLvlDiff timeDiff2 chargeLvlDiff2 dayDiff2 tempDay tempHour tempMin i j firstIndex lastIndex maxCharge fullyChargedStat flag tempTime
 

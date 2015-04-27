@@ -90,7 +90,6 @@ while(i <= length(userBatSeq(:, 1)))
                 if(j == length(userBatSeq(:, 1)))
                    flagFill = 1; 
                 end
-%                 flag = 1;
                 break;
             end
             j = j + 1;
@@ -117,16 +116,10 @@ while(i <= length(userBatSeq(:, 1)))
                 else
                     if(intervalDifference <= round(1440/granularity * 0.07)) %if the time-granularity difference was 7% of (1440/granularity)
                         if(tempStats(4) == 0)
-%                             if((newUserBatSeq(intervalIndex, 6) > tempStats(3) || newUserBatSeq(intervalIndex, 6) < tempStats(3)) && abs(chargeRate - chargeRate1) >= 5 && chargeRate < 0 && chargeRate1 > 0)
-%                                newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) - ((k-intervalIndex) * chargeRate1);
-%                                newUserBatSeq(k, 9) = chargeRate1;
-%                                globalChargeRate = chargeRate1;
                             if(newUserBatSeq(intervalIndex, 6) > tempStats(3) || newUserBatSeq(intervalIndex, 6) < tempStats(3))
                                newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) - ((k-intervalIndex) * chargeRate);
                                newUserBatSeq(k, 9) = chargeRate;
                                globalChargeRate = chargeRate;
-%                             elseif(newUserBatSeq(intervalIndex, 6) < tempStats(3))
-%                                 newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) + ((k-intervalIndex) * chargeRate);
                             else
                                 newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6);
                                 newUserBatSeq(k, 9) = 0;
@@ -142,8 +135,6 @@ while(i <= length(userBatSeq(:, 1)))
                                       flag = 1;
                                       newUserBatSeq(k, 7) = 1;
                                    end
-%                                 elseif(newUserBatSeq(intervalIndex, 6) < userBatSeq(i, 6))
-%                                     newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) + ((k-intervalIndex) * chargeRate1);
                                 else
                                     newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6);
                                     globalChargeRate = 0;
@@ -153,17 +144,6 @@ while(i <= length(userBatSeq(:, 1)))
                                 globalChargeRate = 0;
                             end
                         end
-%                         if(newUserBatSeq(intervalIndex, 6) > tempStats(3) && newUserBatSeq(intervalIndex, 7) == 0)
-%                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) + ((k-intervalIndex) * chargeRate);
-%                         elseif(newUserBatSeq(intervalIndex, 6) < tempStats(3) && newUserBatSeq(intervalIndex, 7) == 1)
-%                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) - ((k-intervalIndex) * chargeRate);
-%                         elseif(newUserBatSeq(intervalIndex, 6) > tempStats(3) && userBatSeq(i - 1, 7) == 0)
-%                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) - ((k-intervalIndex) * chargeRate);
-%                         elseif(newUserBatSeq(intervalIndex, 6) < tempStats(3) && userBatSeq(i - 1, 7) == 1)
-%                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6) + ((k-intervalIndex) * chargeRate);
-%                         else
-%                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6);
-%                         end
                     else
                         if(newUserBatSeq(intervalIndex, 6) > userBatSeq(i, 6)) %For the discharge period
                             tempRechargeRate = -normrnd((10/(10/granularity)) - granularity/10, granularity/8); %For the mean, the numerator in the first paranthesis represents the 'assumed' charge level at each 10-minute interval. For Sigma the denominator helps the standard deviation get smaller and larger as granularity decreases or increases respectively
@@ -276,10 +256,7 @@ while(i <= length(userBatSeq(:, 1)))
                             end
                         else %Battery level remains constant
                             newUserBatSeq(k, 6) = newUserBatSeq(intervalIndex, 6);
-                            globalChargeRate = 0;
-                            
-%                         elseif(newUserBatSeq(intervalIndex, 6) < userBatSeq(i, 6) && abs(newUserBatSeq(intervalIndex, 6) - userBatSeq(i, 6)) <= 1)
-                            
+                            globalChargeRate = 0;                            
                         end
                     end
                 end
@@ -352,9 +329,6 @@ while(i <= length(userBatSeq(:, 1)))
     sameIntervalRecords = 0;
     flag = 0;
     flagFill = 0;
-    if(i >= 11719) %For test purposes
-        
-    end
 end
 
 %% Post-processing begins here to fix some issues left unfixed at either cleaning or granularity applying process
@@ -419,7 +393,6 @@ while(i <= length(newUserBatSeq(:, 1)) - 1)
    %Fix the issue of records being marked as discharge although they should
    %indicate charging status
     if(newUserBatSeq(i, 7) == 0 && newUserBatSeq(max(1, i - 1), 6) - newUserBatSeq(i, 6) < -3 * granularity * 0.1 && newUserBatSeq(i, 6) - newUserBatSeq(i + 1, 6) < -2 * granularity * 0.1)
-%         newUserBatSeq(i - 1, 7) = 1;
         newUserBatSeq(i, 7) = 1;
         i = i - 1;
     end
@@ -519,13 +492,6 @@ for i=1:length(indices)
    end
 end
 
-%This section is for test purposes
-% chargeRate = procCalcChargeRate(newUserBatSeq(:, 1:8), 0);
-% indices = find(chargeRate < -34);
-% 
-% if(any(indices))
-%     
-% end
 
 userBatSeq = newUserBatSeq(:, 1:8); %I still cannot make sure the 9th column has been calculated correctly. Therefore I ignore it here.
 

@@ -21,7 +21,7 @@ emission = HMMmodel{1, 2};
 initial = HMMmodel{1, 3};
 
 for i=1:400 %Do it for 400 simulations
-    state = setState(initChargeLvl);
+    state = determineInitState(initChargeLvl);
     for j=2:ceil((1440/timeGranularity) * 2)
         emitParams = emission{1, state};
         emittedChargeRate = normrnd(emitParams(1), emitParams(2));
@@ -40,7 +40,7 @@ end
 
 %% Functions
 
-    function state = setState(initChargeLvl)
+    function state = determineInitState(initChargeLvl)
         if(initChargeLvl ~= 100 && initChargeLvl ~= 0)
             state = 2; %Idle
         elseif(initChargeLvl == 100)
@@ -49,5 +49,7 @@ end
             state = 1; %Shutdown
         end 
     end
+
+fprintf('Simulation of charging/discharging behavior of the model with an initial charge level of %d and time-granularity of %d has been done successfully', initChargeLvl, timeGranularity);
 
 end

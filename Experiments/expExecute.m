@@ -17,9 +17,17 @@ experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 %}
 
 %% The program code
-if(timeGranularity < 0)
+if(size(timeGranularity, 1) > 1)
+   if(size(timeGranularity, 2) == 1)
+      timeGranularity = timeGranularity';
+       timeGranularity = timeGranularity(1, :); %Take the first row only
+   end
+end
+if(size(timeGranularity, 2) == 1 && timeGranularity < 0)
     timeGranularity = 0;
 end
+
+timeGranularity = sort(timeGranularity, 'ascend');
 
 if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quantity
     
@@ -36,27 +44,37 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    timeGranularity = [3, 5, 10, 15, 20, 30];
                 else
                     timeGranularity = abs(timeGranularity);
+                    timeGranularity = timeGranularity(timeGranularity ~= 0);
+                    if(isempty(timeGranularity))
+                       error('You cannot have a time granularity of zero (0). Please try with a time-granularity greater than zero');
+                    end
                 end
                timeGranulatedDatasequences = cell(length(timeGranularity), 2);
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
                for i=1:length(timeGranularity)
                    dataSequence = procStart(Dataset, requestedTags, timeGranularity(i));
+                   timeGranulatedDatasequences{i, 1} = dataSequence;
+                   timeGranulatedDatasequences{i, 2} = timeGranularity(i);
                    HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
-                   timeGranulatedDatasequences{i, 1} = dataSequence;
-                   timeGranulatedDatasequences{i, 2} = timeGranularity(i);
                end
-               miscPlotResults(simulationResult, timeGranularity);
             end
-            %TODO: Run experiments
-            if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models
-                if(size(timeGranularity, 2) == 1 && timeGranularity > 0)
-                    
-                end
-            end
+%             if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models
+%                 if(size(timeGranularity, 2) == 1 && timeGranularity > 0)
+%                     HMMmodel = genHMM(dataSequence, timeGranularity, expType);
+%                     simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
+%                 else
+%                     for i=1:length(timeGranularity)
+%                         HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
+%                         HMMmodel{i, 2} = timeGranularity(i);
+%                         simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+%                         simulationResult{i, 2} = timeGranularity(i);
+%                     end
+%                 end
+%             end
         else
             error('The file "Complete 207 users data.mat" does not exist in the source directory "%s".\n', pwd)
         end
@@ -78,7 +96,6 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
                end
-               miscPlotResults(simulationResult, timeGranularity);
            else
                timeGranulatedDataVarName = num2words(timeGranularity, 'hyphen', true);
                timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
@@ -89,7 +106,6 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                     dataSequence = eval([timeGranulatedDataVarName, ';']); 
                     HMMmodel = genHMM(dataSequence, timeGranularity, 1);
                     simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
-                    miscPlotResults(simulationResult, timeGranularity);
                else
                    error('The stored data sequences does not contain %s dataset that you are looking for. Please try with a time-granularityof 3, 5, 10, 15, 20, 30 or start the program from scratch and input your desired time-granularity\n', timeGranulatedDataVarName);
                end
@@ -98,6 +114,8 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             error('The file "time-granulated data.mat" does not exist in the source directory "%s\\Data".\n', pwd)
         end
     end
+    
+    miscPlotResults(simulationResult, timeGranularity); %Print the results obtained via any of the above section of the program
     
 end
 

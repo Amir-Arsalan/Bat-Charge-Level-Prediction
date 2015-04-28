@@ -426,24 +426,29 @@ while(i <= length(newUserBatSeq(:, 1)) - 1)
         if(sum(difference) <= sum(tempRechargeRate) + (j - i) * granularity/6)
             newUserBatSeq(i:j-1, 7) = 1;
         else
+            % This section fixes the issue of unexpected battery charge
+            % level increases more smooth and realistical (hopefully)
             newUserBatSeq(i:j-1, 6) = newUserBatSeq(max(1, i - 1), 6);
             newUserBatSeq(j-1, 7) = 1;
             tempRechargeRate = sort(tempRechargeRate, 'descend');
-            tempIndx = 1;
+            tempIndex = 1;
             if(j - i > 1)
                 while(j > 0 && j >= i)
-                   if(newUserBatSeq(max(1, j - tempIndx + 1), 6) + tempRechargeRate(tempIndx) >= newUserBatSeq(max(1, i - 1), 6))
-                       newUserBatSeq(j - tempIndx, 6) = newUserBatSeq(j - tempIndx + 1, 6) + tempRechargeRate(tempIndx);
-                       newUserBatSeq(j - tempIndx, 7) = 1;
+                   if(newUserBatSeq(max(1, j - tempIndex + 1), 6) + tempRechargeRate(tempIndex) >= newUserBatSeq(max(1, i - 1), 6))
+                       newUserBatSeq(j - tempIndex, 6) = newUserBatSeq(j - tempIndex + 1, 6) + tempRechargeRate(tempIndex);
+                       newUserBatSeq(j - tempIndex, 7) = 1;
                    else
                        break;
                    end
-                    tempIndx = tempIndx + 1;
+                    tempIndex = tempIndex + 1;
+                    if(tempIndex > size(tempRechargeRate))
+                        break;
+                    end
                 end
             else
-                newUserBatSeq(j - tempIndx, 7) = 1;
-                if(newUserBatSeq(j - tempIndx + 1, 6) + tempRechargeRate(tempIndx) >= newUserBatSeq(max(1, i - 1), 6))
-                    newUserBatSeq(j - tempIndx, 6) = newUserBatSeq(j - tempIndx + 1, 6) + tempRechargeRate(tempIndx);
+                newUserBatSeq(j - tempIndex, 7) = 1;
+                if(newUserBatSeq(j - tempIndex + 1, 6) + tempRechargeRate(tempIndex) >= newUserBatSeq(max(1, i - 1), 6))
+                    newUserBatSeq(j - tempIndex, 6) = newUserBatSeq(j - tempIndex + 1, 6) + tempRechargeRate(tempIndex);
                 end
             end
         end

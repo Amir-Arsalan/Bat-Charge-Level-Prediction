@@ -1,4 +1,4 @@
-function model = genHMM(dataSequence, timeGranularity, mode)
+function model = genHMM(dataSequence, timeGranularity, expType)
 
 %{
 This function generates a model to be used for simulation porpuses later
@@ -9,17 +9,17 @@ Inputs:
 sequences for time series data and n is the number of attributes for each
 record
 - timeGranularity: The time granularity of the data sequence
-- mode: Determines the model to be learned over the input data sequence
+- expType: Determines the model to be learned over the input data sequence
 
-    If the mode is:
-        - One(1): The model learned in this mode is a simple hidden Markod
-        model (HMM) with 12 pre-defined states and the set of parameters 
-        learned via Maximum Likelihood Estimate (MLE)
+    If the expType is:
+        - One(1): The model learned in this experience type (expType)
+        is a simple hidden Markod model (HMM) with 12 pre-defined states
+        and the set of parameters learned via Maximum Likelihood Estimate (MLE)
 
 %}
 
 %% The code section for generating a model
-if(mode == 1) %First model (a simple HMM with 12 states)
+if(expType == 1) %First model (a simple HMM with 12 states)
     %{
     Discharge states:
         (1) Shutdown: When the discharge rate (9th column of the users data
@@ -44,7 +44,7 @@ if(mode == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
-    [labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, mode);
+    [labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, expType);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);
@@ -76,5 +76,7 @@ if(mode == 1) %First model (a simple HMM with 12 states)
     model{1, 1} = transitionMatrix;
     model{1, 2} = emission;
     model{1, 3} = initialDist;
+    
+    fprintf('Learning model for experience type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully', expType, timeGranularity);
 
 end

@@ -9,9 +9,10 @@ Input:
 new time granularity than or when the data set is different than the ones
 already stored.
 - expType: Type of experiment to be executed
-- timeGranularity: The time granularity at which the expriment will run. If
-is set to zero the experiments will run for the time granularities 3, 5,
-10, 15, 20 and 30.
+- timeGranularity: A single quantity indicating the time granularity 
+at which the expriments will run. If is set to zero the experiments will 
+run for the time granularities 3, 5, 10, 15, 20 and 30.
+- initChargeLvl: The initial charge level from which the simulations start
 %}
 
 if(timeGranularity < 0)
@@ -19,18 +20,20 @@ if(timeGranularity < 0)
 end
 
 if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quantity
+    
     if(fromScratch)
         if(exist('Complete 207 users data.mat', 'file'))
             load('Complete 207 users data.mat', 'Dataset', 'requestedTags', 'requestedPaths');
-            if(timeGranularity ~= 0 && timeGranularity > 0)
-                dataSequences = procStart(Dataset, requestedTags, timeGranularity);
+            if(timeGranularity ~= 0)
+                dataSequence = procStart(Dataset, requestedTags, timeGranularity);
                 %Learn the model
             else
                timeGranularity = [3, 5, 10, 15, 20, 30];
-               timeGranulatedDatasets = cell(length(timeGranularity), 1);
+               timeGranulatedDatasets = cell(length(timeGranularity), 2);
                for i=1:length(timeGranularity)
-                   dataSequences = procStart(Dataset, requestedTags, timeGranularity(i));
-                   timeGranulatedDatasets{i, 1} = dataSequences;
+                   dataSequence = procStart(Dataset, requestedTags, timeGranularity(i));
+                   timeGranulatedDatasets{i, 1} = dataSequence;
+                   timeGranulatedDatasets{i, 2} = timeGranularity(i);
                end
             end
 
@@ -45,6 +48,17 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         if(exist('time-granulated data.mat', 'file'))
            if(timeGranularity == 0)
                load('time-granulated data.mat'); %Load all available datasets with different time granularities stored in it
+               timeGranularity = [3, 5, 10, 15, 20, 30];
+               HMMmodel = cell(length(timeGranularity), 1);
+               simulations = cell(length(timeGranularity), 1);
+               for i=1:length(timeGranularity)
+                   timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
+                   timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
+                   timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
+                   dataSequence = eval([timeGranulatedDataVarName, ';']);
+                   HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
+                   simulations{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+               end
            else
                timeGranulatedDataVarName = num2words(timeGranularity, 'hyphen', true);
                timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
@@ -52,17 +66,18 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                warning ('off','all');
                load('time-granulated data.mat', timeGranulatedDataVarName);
                if(exist(timeGranulatedDataVarName, 'var'))
-                  eval(['dataSequences', ' = ', timeGranulatedDataVarName, ';']); 
-                  HMMmodel = genHMM(dataSequences, timeGranularity, 1);
+                  dataSequence = eval([timeGranulatedDataVarName, ';']); 
+                  HMMmodel = genHMM(dataSequence, timeGranularity, 1);
                   simulations = expHMM(initChargeLvl, HMMmodel, timeGranularity);
                else
-                   error('The stored data sequences does not contain %s dataset that you are looking for. Please try with another time-granularity\n', timeGranulatedDataVarName);
+                   error('The stored data sequences does not contain %s dataset that you are looking for. Please try with a time-granularityof 3, 5, 10, 15, 20, 30 or start the program from scratch and input your desired time-granularity\n', timeGranulatedDataVarName);
                end
            end
         else
             error('The file "time-granulated data.mat" does not exist in the source directory "%s\\Data".\n', pwd)
         end
     end
+    
 end
 
 plot(1:288, simulations(1:5, :))

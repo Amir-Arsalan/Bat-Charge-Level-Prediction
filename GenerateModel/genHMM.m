@@ -1,7 +1,7 @@
-function model = genHMM(usersData, granularity, mode)
+function model = genHMM(dataSequence, timeGranularity, mode)
 
 transitionMatrix = [];
-[labeledDataset, usersIndex] = labelDataForHMM(usersData, granularity, mode);
+[labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, mode);
 
 %% The code section for generating a model
 if(mode == 1) %First model (a simple HMM with 13 states)

@@ -12,14 +12,14 @@ acceptableDevices = true(size(dataset, 1), 1); %Contains the deviceIDs to proces
 batCol = find(strcmp('PhoneLabSystemAnalysis-BatteryChange', tags)) + 1; %Find the column number of the tag. The +1 is due to the structure of the dataset where the first column contains the device only
 
 for j=1:size(dataset, 1)
-   if(size(dataset{j, batCol}, 1) < 20)
+   if(size(dataset{j, batCol}, 1) < 5) %Use the data with at least 5 days of recorded data for each user
       acceptableDevices(j) = false;
    end
 end
 deviceIndx = find(acceptableDevices); %The value will be used to store the indices in the "dataset" belonging to devices having more than 20 days of record; it is initially assigned a dummy value.
 timeGranulatedDataset = cell(sum(acceptableDevices), 2);
 % if(~exist('time-granulated data.mat', 'file'))
-    for j=1:2
+    for j=1:sum(acceptableDevices)
         userBatSeq = combineUserRecords(dataset{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
 %         [charge, discharge, timeIrregularBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, granularity); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
         userBatSeq = cleanData(userBatSeq, 4, false);

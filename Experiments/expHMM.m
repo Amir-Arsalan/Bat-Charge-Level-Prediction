@@ -13,7 +13,7 @@ Inputs:
     - timeGranularity: The time granularity of simulations
 %}
 
-simulations = zeros(400, (1440/timeGranularity) * 2); %400 Simulations, each 2-day long
+simulations = zeros(400, ceil((1440/timeGranularity) * 2)); %400 Simulations, each 2-day long
 simulations(:, 1) = initChargeLvl;
 
 transition = HMMmodel{1, 1};
@@ -22,7 +22,7 @@ initial = HMMmodel{1, 3};
 
 for i=1:400 %Do it for 400 simulations
     state = setState(initChargeLvl);
-    for j=2:(1440/timeGranularity) * 2
+    for j=2:ceil((1440/timeGranularity) * 2)
         emitParams = emission{1, state};
         emittedChargeRate = normrnd(emitParams(1), emitParams(2));
         if(simulations(i, j - 1) - emittedChargeRate <= 0)

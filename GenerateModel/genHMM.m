@@ -1,12 +1,26 @@
 function model = genHMM(dataSequence, timeGranularity, mode)
 
-transitionMatrix = [];
-[labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, mode);
+%{
+This function generates a model to be used for simulation porpuses later
+
+Inputs:
+
+- dataSequence: An m by n matrix where m is the number of time-granulated 
+sequences for time series data and n is the number of attributes for each
+record
+- timeGranularity: The time granularity of the data sequence
+- mode: Determines the model to be learned over the input data sequence
+
+    If the mode is:
+        - One(1): The model learned in this mode is a simple hidden Markod
+        model (HMM) with 12 pre-defined states and the set of parameters 
+        learned via Maximum Likelihood Estimate (MLE)
+
+%}
 
 %% The code section for generating a model
-if(mode == 1) %First model (a simple HMM with 13 states)
+if(mode == 1) %First model (a simple HMM with 12 states)
     %{
-    The first model consists the following states:
     Discharge states:
         (1) Shutdown: When the discharge rate (9th column of the users data
         set) is 0 - This is a very naive assumption because in many times 
@@ -29,6 +43,8 @@ if(mode == 1) %First model (a simple HMM with 13 states)
         (11) About to get fully charged: When the recharge rate is < -3/(10/granularity) & >= -6.5/(10/granularity)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
+    
+    [labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, mode);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);

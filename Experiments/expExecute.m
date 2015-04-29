@@ -17,6 +17,8 @@ experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 %}
 
 %% The program code
+
+
 if(size(timeGranularity, 1) > 1)
    if(size(timeGranularity, 2) == 1)
       timeGranularity = timeGranularity';

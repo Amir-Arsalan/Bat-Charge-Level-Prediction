@@ -15,6 +15,7 @@ By useless I mean their phones has been used in a weired way (e.g. been
 almost 100% idle)
 %}
 
+%TODO: Write an algorithm to find noisy data sets which is robust for all time-granularities
 labeledDataset = [];
 noisyDatasetsIndices = false(size(usersData, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
 temp = zeros(size(usersData, 1), 3);

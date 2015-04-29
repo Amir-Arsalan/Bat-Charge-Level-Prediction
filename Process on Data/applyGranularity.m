@@ -490,9 +490,9 @@ for i=1:length(indices)
            cumulativeRechargeRate = cumulativeRechargeRate + tempRechargeRate;
            j = j + 1;
        end
-       if(newUserBatSeq(indices(i) - j, 6) == startingChargeRate)
-           newUserBatSeq(indices(i) - j, 7) = 1;
-           newUserBatSeq(indices(i) - j, 8) = 2;
+       if(newUserBatSeq(max(1, indices(i) - j), 6) == startingChargeRate)
+           newUserBatSeq(max(1, indices(i) - j), 7) = 1;
+           newUserBatSeq(max(1, indices(i) - j), 8) = 2;
        end
    end
 end

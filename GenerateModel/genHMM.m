@@ -1,15 +1,15 @@
-function model = genHMM(dataSequence, timeGranularity, expType)
+function model = genHMM(dataRecord, timeGranularity, expType)
 
 %{
 This function generates a model to be used for simulation porpuses later
 
 Inputs:
 
-- dataSequence: An m by n matrix where m is the number of time-granulated 
-sequences for time series data and n is the number of attributes for each
+- dataRecord: An m by n matrix where m is the number of time-granulated 
+records for time series data and n is the number of attributes for each
 record
-- timeGranularity: The time granularity of the data sequence
-- expType: Determines the model to be learned over the input data sequence
+- timeGranularity: The time granularity of the data record
+- expType: Determines the model to be learned over the input data record
 
     If the expType is:
         - One(1): The model learned in this experience type (expType)
@@ -44,19 +44,19 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
-    [labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, expType);
+    [labeledDataRecord, usersIndex] = labelDataForHMM(dataRecord, timeGranularity, expType);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);
     initialDist = zeros(1, 12);
     
     for i=1:12
-       tempChargeRates = labeledDataset(labeledDataset(:, 10) == i, 9);
+       tempChargeRates = labeledDataRecord(labeledDataRecord(:, 10) == i, 9);
        emission{1, i} = [mean(tempChargeRates), std(tempChargeRates)];
     end
     
     for i=1:length(usersIndex) - 1
-        singleUserData = labeledDataset(usersIndex(i) + 1:usersIndex(i + 1), :);
+        singleUserData = labeledDataRecord(usersIndex(i) + 1:usersIndex(i + 1), :);
         labels = double(singleUserData(:, end));
         
         initialDist(labels(1)) = initialDist(labels(1)) + 1;

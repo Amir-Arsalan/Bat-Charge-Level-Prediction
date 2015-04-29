@@ -1,9 +1,23 @@
 function dataset = procStart(dataset, tags, timeGranularity)
 %{
-This function starts processing the data set and 
-%Input: an m by n cell where m is the number of users and n is the number
-%of tags (only the column corresponding to the tag 
-%"PhoneLabSystemAnalysis-BatteryChange" will be processed)
+This function starts processing the data set and applies the desired
+time-granularity on it.
+
+Inputs: 
+- dataset: An m by n cell where m is the number of users and n is the 
+number of tags. Each {i, j} element of the input cell contains a r by x
+matrix where r is the number of records of the time-series data and x 
+is the number of attributes.
+- tags: An 1 by n cell where n is the number of tags. Each element of the
+cell contains a string corresponding to each tag.
+- timeGranularity: A single quantity; it is the desired timeGranularity
+    
+Note: Currently only the column corresponding to the tag "PhoneLabSystemAnalysis-BatteryChange" is processed.
+
+Output: An t by x + 1 matrix where t is the number of records after
+applying the desired timeGranularity. The added column is a column appended
+as the first column to the r by x matrix and stores the day number in which
+the record has been collected.
 %}
 
 %% Code

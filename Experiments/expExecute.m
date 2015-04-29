@@ -39,16 +39,17 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             if(size(timeGranularity, 2) == 1 && timeGranularity ~= 0)
                 timeGranularity = abs(timeGranularity);
                 dataRecord = procStart(Dataset, requestedTags, timeGranularity);
-                HMMmodel = genHMM(dataRecord, timeGranularity, expType);
+                validDataRecords = procIdentifyNoisyDatasets(dataRecord);
+                HMMmodel = genHMM(validDataRecords, timeGranularity, expType);
                 simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
-            else
+            else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
                    timeGranularity = [3, 5, 10, 15, 20, 30];
                 else
                     timeGranularity = abs(timeGranularity);
                     timeGranularity = timeGranularity(timeGranularity ~= 0);
                     if(isempty(timeGranularity))
-                       error('You cannot have a time granularity of zero (0). Please try with a time-granularity greater than zero');
+                       error('You cannot have a time-granularity vector with all of its elements zeros(0). Please try with a time-granularity greater than zero');
                     end
                 end
                timeGranulatedDatarecords = cell(length(timeGranularity), 2);
@@ -58,11 +59,18 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    dataRecord = procStart(Dataset, requestedTags, timeGranularity(i));
                    timeGranulatedDatarecords{i, 1} = dataRecord;
                    timeGranulatedDatarecords{i, 2} = timeGranularity(i);
-                   HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
-                   HMMmodel{i, 2} = timeGranularity(i);
-                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
-                   simulationResult{i, 2} = timeGranularity(i);
+%                    HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
+%                    HMMmodel{i, 2} = timeGranularity(i);
+%                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+%                    simulationResult{i, 2} = timeGranularity(i);
                end
+            end
+            if(size(timeGranularity, 2) > 1)
+                validDataRecords = procIdentifyNoisyDatasets(timeGranulatedDatarecords);
+                dataRecordFeatureCell = procExtractFeaturesFromDatasets(timeGranulatedDatarecords);
+                for i=1:size(timeGranularity, 2)
+                    %TODO: Complete this section
+                end
             end
 %             if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models
 %                 if(size(timeGranularity, 2) == 1 && timeGranularity > 0)

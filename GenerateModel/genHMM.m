@@ -1,11 +1,11 @@
-function model = genHMM(dataRecord, timeGranularity, expType)
+function model = genHMM(dataRecords, timeGranularity, expType)
 
 %{
 This function generates a model to be used for simulation porpuses later
 
 Inputs:
 
-- dataRecord: An m by n matrix where m is the number of time-granulated 
+- dataRecord: An m by 2 matrix where m is the number of time-granulated 
 records for time series data and n is the number of attributes for each
 record
 - timeGranularity: The time granularity of the data record
@@ -44,7 +44,7 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
-    [labeledDataRecord, usersIndex] = labelDataForHMM(dataRecord, timeGranularity, expType);
+    [labeledDataRecord, usersIndex] = labelDataForHMM(dataRecords, timeGranularity, expType);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);
@@ -77,6 +77,6 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     model{1, 2} = emission;
     model{1, 3} = initialDist;
     
-    fprintf('Learning model for experience type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully', expType, timeGranularity);
+    fprintf('Learning model for experience type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
 
 end

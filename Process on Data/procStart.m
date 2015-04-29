@@ -31,8 +31,8 @@ for j=1:size(dataset, 1)
    end
 end
 deviceIndx = find(acceptableDevices); %The value will be used to store the indices in the "dataset" belonging to devices having more than 20 days of record; it is initially assigned a dummy value.
-timeGranulatedDataset = cell(sum(acceptableDevices), 2);
-    for j=1:sum(acceptableDevices)
+timeGranulatedDataset = cell(25, 2);
+    for j=1:25
         userBatRecord = combineUserRecords(dataset{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
 %         [charge, discharge, timeIrregularBatRecord, timeGranulatedBatRecord] = extractBatStats(userBatRecord, granularity); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
         userBatRecord = cleanData(userBatRecord, 4, false);

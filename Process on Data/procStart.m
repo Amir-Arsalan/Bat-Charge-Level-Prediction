@@ -32,7 +32,7 @@ timeGranulatedDataset = cell(sum(acceptableDevices), 2);
         timeGranulatedDataset{j, 2} = timeGranulatedBatSeq;
         fprintf('%d\n', j);
     end
-    fprintf('Processing data and applying %d-minute time granularity has been done successfully\n', timeGranularity);
+    fprintf('Cleaning data and applying %d-minute time granularity has been done successfully\n', timeGranularity);
 dataset = timeGranulatedDataset;
 
 end

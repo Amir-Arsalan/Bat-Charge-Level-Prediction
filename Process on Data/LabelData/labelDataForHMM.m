@@ -106,8 +106,8 @@ if(mode == 1) %Tag each single record (No hierarchical model)
     allUsersData(tempIndex, 10) = 12;
     
     
-    dischargeIndices = find(allUsersData(:, 7) == 0);
-    rechargeIndices = find(allUsersData(:, 7) == 1);
+%     dischargeIndices = find(allUsersData(:, 7) == 0);
+%     rechargeIndices = find(allUsersData(:, 7) == 1);
     
 %     disIndxTemp = false(length(dischargeIndices), 1);
 %     reIndxTemp = false(length(rechargeIndices), 1);
@@ -134,8 +134,8 @@ if(mode == 1) %Tag each single record (No hierarchical model)
 %     rechargeIndices(reIndxTemp) = [];
 %     clear reIndxTemp
     
-    dischargeRates = [dischargeRates; allUsersData(dischargeIndices, 9)];
-    rechargeRates = [rechargeRates; allUsersData(rechargeIndices, 9)];
+%     dischargeRates = [dischargeRates; allUsersData(dischargeIndices, 9)];
+%     rechargeRates = [rechargeRates; allUsersData(rechargeIndices, 9)];
     
 %     disMean = mean(dischargeRates); %Discharge rate mean
 %     disStd = std(dischargeRates); %Discharge rate standard deviation

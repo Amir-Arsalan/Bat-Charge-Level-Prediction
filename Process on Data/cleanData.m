@@ -9,29 +9,29 @@ columns and the time between the records
 %% Remove duplicate records
 windowSize = 40;
 for j=1:iterations
-    seq = 1:windowSize:size(userBatSeq, 1);
-    seq = [seq, seq(end)+mod(size(userBatSeq, 1), windowSize)-1]; %To account for the remaining rows of data that do not belong to the last interval in "seq"
-    if(seq(end) == seq(end-1))
-       seq = seq(1:end-1); 
+    record = 1:windowSize:size(userBatSeq, 1);
+    record = [record, record(end)+mod(size(userBatSeq, 1), windowSize)-1]; %To account for the remaining rows of data that do not belong to the last interval in "record"
+    if(record(end) == record(end-1))
+       record = record(1:end-1); 
     end
-    for i=1:length(seq)-1
-       [cleanedRecords, ~, ~] = unique(userBatSeq(seq(i):seq(i+1), :), 'rows', 'stable');
-       if(length(cleanedRecords(:, 1)) ~= length(userBatSeq(seq(i):seq(i+1), 1)))
-           difference = length(userBatSeq(seq(i):seq(i+1), 1)) - length(cleanedRecords(:, 1));
-           if(seq(i) == 1)
-               userBatSeq(1:seq(i+1), :) = [];
+    for i=1:length(record)-1
+       [cleanedRecords, ~, ~] = unique(userBatSeq(record(i):record(i+1), :), 'rows', 'stable');
+       if(length(cleanedRecords(:, 1)) ~= length(userBatSeq(record(i):record(i+1), 1)))
+           difference = length(userBatSeq(record(i):record(i+1), 1)) - length(cleanedRecords(:, 1));
+           if(record(i) == 1)
+               userBatSeq(1:record(i+1), :) = [];
                userBatSeq = [cleanedRecords; userBatSeq];
            else
-    %            tempData = userBatSeq(1:seq(i)-1, :);
-               userBatSeq = [userBatSeq(1:seq(i)-1, :); cleanedRecords; userBatSeq(seq(i+1)+1:end, :)];
+    %            tempData = userBatSeq(1:record(i)-1, :);
+               userBatSeq = [userBatSeq(1:record(i)-1, :); cleanedRecords; userBatSeq(record(i+1)+1:end, :)];
 
            end
-           seq(i+1:end) = seq(i+1:end) - difference;
+           record(i+1:end) = record(i+1:end) - difference;
        end
 %        i = i + 1;
     end
 end
-clear cleanedRecords seq windowSize difference
+clear cleanedRecords record windowSize difference
 
 if(duplicate == true)
    return; 

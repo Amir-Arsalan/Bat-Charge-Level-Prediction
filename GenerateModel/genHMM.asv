@@ -1,4 +1,4 @@
-function model = genHMM(dataSequence, timeGranularity, mode)
+function model = genHMM(dataSequence, timeGranularity, expType)
 
 %{
 This function generates a model to be used for simulation porpuses later
@@ -6,20 +6,21 @@ This function generates a model to be used for simulation porpuses later
 Inputs:
 
 - dataSequence: An m by n matrix where m is the number of time-granulated 
-sequences for time series data and n is the number of attributes for each
+records for time series data and n is the number of attributes for each
 record
-- timeGranularity: The time granularity of the data sequence
-- mode: Determines the model to be learned over the input data sequence
+- timeGranularity: The time granularity of the data record
+- expType: Determines the model to be learned over the input data record
 
-    If the mode is:
-
+    If the expType is:
+        - One(1): The model learned in this experience type (expType)
+        is a simple hidden Markod model (HMM) with 12 pre-defined states
+        and the set of parameters learned via Maximum Likelihood Estimate (MLE)
 
 %}
 
 %% The code section for generating a model
-if(mode == 1) %First model (a simple HMM with 12 states)
+if(expType == 1) %First model (a simple HMM with 12 states)
     %{
-    The first model consists the following states and is trained via Maximum Likelihood Estimate (MLE):
     Discharge states:
         (1) Shutdown: When the discharge rate (9th column of the users data
         set) is 0 - This is a very naive assumption because in many times 
@@ -43,19 +44,19 @@ if(mode == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
-    [labeledDataset, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, mode);
+    [labeledDataSequence, usersIndex] = labelDataForHMM(dataSequence, timeGranularity, expType);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);
     initialDist = zeros(1, 12);
     
     for i=1:12
-       tempChargeRates = labeledDataset(labeledDataset(:, 10) == i, 9);
+       tempChargeRates = labeledDataSequence(labeledDataSequence(:, 10) == i, 9);
        emission{1, i} = [mean(tempChargeRates), std(tempChargeRates)];
     end
     
     for i=1:length(usersIndex) - 1
-        singleUserData = labeledDataset(usersIndex(i) + 1:usersIndex(i + 1), :);
+        singleUserData = labeledDataSequence(usersIndex(i) + 1:usersIndex(i + 1), :);
         labels = double(singleUserData(:, end));
         
         initialDist(labels(1)) = initialDist(labels(1)) + 1;
@@ -75,5 +76,7 @@ if(mode == 1) %First model (a simple HMM with 12 states)
     model{1, 1} = transitionMatrix;
     model{1, 2} = emission;
     model{1, 3} = initialDist;
+    
+    fprintf('Learning model for experience type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully', expType, timeGranularity);
 
 end

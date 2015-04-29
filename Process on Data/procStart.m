@@ -19,17 +19,17 @@ end
 deviceIndx = find(acceptableDevices); %The value will be used to store the indices in the "dataset" belonging to devices having more than 20 days of record; it is initially assigned a dummy value.
 timeGranulatedDataset = cell(sum(acceptableDevices), 2);
     for j=1:sum(acceptableDevices)
-        userBatSeq = combineUserRecords(dataset{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
-%         [charge, discharge, timeIrregularBatSeq, timeGranulatedBatSeq] = extractBatStats(userBatSeq, granularity); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
-        userBatSeq = cleanData(userBatSeq, 4, false);
-        timeIrregularBatSeq = userBatSeq;
-        timeGranulatedBatSeq = applyGranularity(userBatSeq, timeGranularity); %Apply the requested time-granularity on the userBatSeq records
+        userBatRecord = combineUserRecords(dataset{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
+%         [charge, discharge, timeIrregularBatRecord, timeGranulatedBatRecord] = extractBatStats(userBatRecord, granularity); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
+        userBatRecord = cleanData(userBatRecord, 4, false);
+        timeIrregularBatRecord = userBatRecord;
+        timeGranulatedBatRecord = applyGranularity(userBatRecord, timeGranularity); %Apply the requested time-granularity on the userBatRecord records
     %     timeGranulatedDataset{j, 1} = charge;
     %     timeGranulatedDataset{j, 2} = discharge;
-    %     timeGranulatedDataset{j, 3} = originalBatSeq;
-    %     timeGranulatedDataset{j, 4} = timeGranulatedBatSeq;
-        timeGranulatedDataset{j, 1} = timeIrregularBatSeq;
-        timeGranulatedDataset{j, 2} = timeGranulatedBatSeq;
+    %     timeGranulatedDataset{j, 3} = originalBatRecord;
+    %     timeGranulatedDataset{j, 4} = timeGranulatedBatRecord;
+        timeGranulatedDataset{j, 1} = timeIrregularBatRecord;
+        timeGranulatedDataset{j, 2} = timeGranulatedBatRecord;
         fprintf('%d\n', j);
     end
     fprintf('Cleaning data and applying %d-minute time granularity has been done successfully\n', timeGranularity);

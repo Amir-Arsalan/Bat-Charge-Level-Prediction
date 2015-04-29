@@ -38,8 +38,8 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             load('Complete 207 users data.mat', 'Dataset', 'requestedTags', 'requestedPaths');
             if(size(timeGranularity, 2) == 1 && timeGranularity ~= 0)
                 timeGranularity = abs(timeGranularity);
-                dataSequence = procStart(Dataset, requestedTags, timeGranularity);
-                HMMmodel = genHMM(dataSequence, timeGranularity, expType);
+                dataRecord = procStart(Dataset, requestedTags, timeGranularity);
+                HMMmodel = genHMM(dataRecord, timeGranularity, expType);
                 simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
             else
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
@@ -51,14 +51,14 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                        error('You cannot have a time granularity of zero (0). Please try with a time-granularity greater than zero');
                     end
                 end
-               timeGranulatedDatasequences = cell(length(timeGranularity), 2);
+               timeGranulatedDatarecords = cell(length(timeGranularity), 2);
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
                for i=1:length(timeGranularity)
-                   dataSequence = procStart(Dataset, requestedTags, timeGranularity(i));
-                   timeGranulatedDatasequences{i, 1} = dataSequence;
-                   timeGranulatedDatasequences{i, 2} = timeGranularity(i);
-                   HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
+                   dataRecord = procStart(Dataset, requestedTags, timeGranularity(i));
+                   timeGranulatedDatarecords{i, 1} = dataRecord;
+                   timeGranulatedDatarecords{i, 2} = timeGranularity(i);
+                   HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
@@ -66,11 +66,11 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             end
 %             if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models
 %                 if(size(timeGranularity, 2) == 1 && timeGranularity > 0)
-%                     HMMmodel = genHMM(dataSequence, timeGranularity, expType);
+%                     HMMmodel = genHMM(dataRecord, timeGranularity, expType);
 %                     simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
 %                 else
 %                     for i=1:length(timeGranularity)
-%                         HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
+%                         HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
 %                         HMMmodel{i, 2} = timeGranularity(i);
 %                         simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
 %                         simulationResult{i, 2} = timeGranularity(i);
@@ -91,9 +91,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
                    timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
                    timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
-                   dataSequence = eval([timeGranulatedDataVarName, ';']);
+                   dataRecord = eval([timeGranulatedDataVarName, ';']);
 %                    eval(['clear', timeGranulatedDataVarName, ';']);
-                   HMMmodel{i, 1} = genHMM(dataSequence, timeGranularity(i), expType);
+                   HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
@@ -105,11 +105,11 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                warning ('off','all');
                load('time-granulated data.mat', timeGranulatedDataVarName);
                if(exist(timeGranulatedDataVarName, 'var'))
-                    dataSequence = eval([timeGranulatedDataVarName, ';']); 
-                    HMMmodel = genHMM(dataSequence, timeGranularity, 1);
+                    dataRecord = eval([timeGranulatedDataVarName, ';']); 
+                    HMMmodel = genHMM(dataRecord, timeGranularity, 1);
                     simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
                else
-                   error('The stored data sequences does not contain %s dataset that you are looking for. Please try with a time-granularityof 3, 5, 10, 15, 20, 30 or start the program from scratch and input your desired time-granularity\n', timeGranulatedDataVarName);
+                   error('The stored data records does not contain %s dataset that you are looking for. Please try with a time-granularityof 3, 5, 10, 15, 20, 30 or start the program from scratch and input your desired time-granularity\n', timeGranulatedDataVarName);
                end
            end
         else

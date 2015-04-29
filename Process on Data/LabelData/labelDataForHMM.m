@@ -18,7 +18,7 @@ almost 100% idle)
 %TODO: Write an algorithm to find noisy data sets which is robust for all time-granularities
 labeledDataset = [];
 noisyDatasetsIndices = false(size(usersData, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
-temp = zeros(size(usersData, 1), 3);
+temp = zeros(size(usersData, 1), 5);
 for i=1:size(usersData, 1)
     singleUserData = usersData{i, 2};
     singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an added column of "charge/discharge rate"

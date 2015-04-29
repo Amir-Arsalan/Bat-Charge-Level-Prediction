@@ -18,7 +18,7 @@ almost 100% idle)
 %TODO: Write an algorithm to find noisy data sets which is robust for all time-granularities
 labeledDataset = [];
 noisyDatasetsIndices = false(size(usersData, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
-temp = zeros(size(usersData, 1), 4);
+temp = zeros(size(usersData, 1), 5);
 for i=1:size(usersData, 1)
     singleUserData = usersData{i, 2};
     singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an added column of "charge/discharge rate"
@@ -26,6 +26,7 @@ for i=1:size(usersData, 1)
     temp(i, 2) = sum(singleUserData(:, 8))/size(singleUserData, 1); %The ratio of sum of "existing" records to "all" records
     temp(i, 3) = sum(singleUserData(:, end) == 0) / size(singleUserData, 1);
     temp(i, 4) = sum(singleUserData(:, 7) == 1 & singleUserData(:, 6) > 97 & singleUserData(:, end) == 0) / size(singleUserData, 1); %The ratio of number of records indicating that the phone is fully charged and is in idle state to total number of records
+    temp(i, 5) = sum(singleUserData(:, 7) == 1)/size(singleUserData, 1);
     noisyDatasetsIndices(i) = singleUserData(end, 1) < 100 && (temp(i, 2) < .25 || temp(i, 3) > .38);
 end
 

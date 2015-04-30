@@ -75,22 +75,31 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             error('The file "Complete 207 users data.mat" does not exist in the source directory "%s".\n', pwd)
         end
     else %If not from scracth (want to use a pre-stored data set)
-        if(exist('time-granulated data.mat', 'file'))
+%         if(exist('time-granulated data.mat', 'file'))
+        if(exist('Recent timeGranulated Data.mat', 'file'))
            if(timeGranularity == 0)
-               load('time-granulated data.mat'); %Load all available datasets with different time granularities stored in it
+%                load('time-granulated data.mat'); %Load all available datasets with different time granularities stored in it
+               load('Recent timeGranulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
+               timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
+               timeGranularityIndices = sortrows(timeGranularityIndices, 2);
+               timeGranularity = timeGranularityIndices(:, 2);
+               timeGranularityIndices = timeGranularityIndices(:, 1);
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
-%                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
-               %TODO: The format of storing data record sets has change.
-               %Please write the appropricate code to deal with it
-               for i=1:length(timeGranularity)
-                   timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
-                   timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
-                   timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
-                   dataRecord = eval([timeGranulatedDataVarName, ';']);
-%                    eval(['clear', timeGranulatedDataVarName, ';']);
-                   HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
+%                for i=1:length(timeGranularity)
+%                    timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
+%                    timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
+%                    timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
+%                    dataRecord = eval([timeGranulatedDataVarName, ';']);
+% %                    eval(['clear', timeGranulatedDataVarName, ';']);
+%                    HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
+%                    HMMmodel{i, 2} = timeGranularity(i);
+%                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+%                    simulationResult{i, 2} = timeGranularity(i);
+%                end
+                for i=1:length(timeGranularityIndices)
+                   HMMmodel{i, 1} = genHMM(timeGranulatedDatarecords{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);

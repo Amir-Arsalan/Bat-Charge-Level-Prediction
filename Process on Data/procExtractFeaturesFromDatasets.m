@@ -6,9 +6,7 @@ help identify some data sets that are highly noisy and may be harmful in
 model-learning phase.
 
 Input:
-- usersData: A cell of m by 2 containing all users data records. The 1st
-column stores the original, cleaned data set and the 2nd column stores the
-time-granulated data set
+
 
 Output: A featureMatrix/cell for each data record
 %}
@@ -37,7 +35,7 @@ else %If the dataRecords was a cell object (containing more than 1 data record s
     for i=1:size(dataRecords, 1)
         for j=1:size(dataRecords{i, 1}, 1)
             singleUserData = dataRecords{i, 1}{j, 2};
-            singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an added column of "charge/discharge rate"
+            singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an additional column of "charge/discharge rate" appended as the last column
             dataRecordFeatureCell{i, 1}(j, 1) = singleUserData(end, 1); %Number of days that the data has been collected for
             dataRecordFeatureCell{i, 1}(j, 2) = size(dataRecords{i, 1}, 1) / size(singleUserData, 1); %The ratio of total number of records in the raw data set to total number of time-granulated data
             dataRecordFeatureCell{i, 1}(j, 3) = sum(singleUserData(:, 8) == 1) / size(singleUserData, 1); %The ratio of sum of records that have an existing match in the original, raw data record set to all records of the time-granulated data record set

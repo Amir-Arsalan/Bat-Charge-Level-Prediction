@@ -50,6 +50,6 @@ end
         end 
     end
 
-fprintf('Simulation of charging/discharging behavior of the model with an initial charge level of %d and time-granularity of %d has been done successfully', initChargeLvl, timeGranularity);
+fprintf('Simulation of charging/discharging behavior of the model with an initial charge level of %d and time-granularity of %d has been done successfully\n', initChargeLvl, timeGranularity);
 
 end

@@ -59,17 +59,16 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    dataRecord = procStart(Dataset, requestedTags, timeGranularity(i));
                    timeGranulatedDatarecords{i, 1} = dataRecord;
                    timeGranulatedDatarecords{i, 2} = timeGranularity(i);
-%                    HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
-%                    HMMmodel{i, 2} = timeGranularity(i);
-%                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
-%                    simulationResult{i, 2} = timeGranularity(i);
                end
             end
+            
             if(size(timeGranularity, 2) > 1)
                 validDataRecords = procIdentifyNoisyDatasets(timeGranulatedDatarecords);
-                dataRecordFeatureCell = procExtractFeaturesFromDatasets(timeGranulatedDatarecords);
                 for i=1:size(timeGranularity, 2)
-                    %TODO: Complete this section
+                   HMMmodel{i, 1} = genHMM(validDataRecords{i, 1}, timeGranularity(i), expType);
+                   HMMmodel{i, 2} = timeGranularity(i);
+                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+                   simulationResult{i, 2} = timeGranularity(i);
                 end
             end
 %             if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models

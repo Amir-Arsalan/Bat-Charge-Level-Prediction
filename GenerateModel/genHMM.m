@@ -12,7 +12,7 @@ record
 - expType: Determines the model to be learned over the input data record
 
     If the expType is:
-        - One(1): The model learned in this experience type (expType)
+        - One(1): The model learned in this experiment type (expType)
         is a simple hidden Markod model (HMM) with 12 pre-defined states
         and the set of parameters learned via Maximum Likelihood Estimate (MLE)
 
@@ -77,6 +77,6 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     model{1, 2} = emission;
     model{1, 3} = initialDist;
     
-    fprintf('Learning model for experience type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
+    fprintf('Learning model for experiment type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
 
 end

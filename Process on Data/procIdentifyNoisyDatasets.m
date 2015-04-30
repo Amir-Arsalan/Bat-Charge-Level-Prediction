@@ -45,20 +45,29 @@ for i=1:size(dataRecordFeatureMatrixOrCell, 1)
     stats4 = mean(dataRecordFeatureMatrixOrCell{i, 1}(:, 6)) + 3 * std(dataRecordFeatureMatrixOrCell{i, 1}(:, 6)); %Plugged in/total
     noisyDatasetsIndices = [noisyDatasetsIndices, dataRecordFeatureMatrixOrCell{i, 1}(:, 3) <= stats1 | dataRecordFeatureMatrixOrCell{i, 1}(:, 4) >= stats2 | dataRecordFeatureMatrixOrCell{i, 1}(:, 5) >= stats3 | dataRecordFeatureMatrixOrCell{i, 1}(:, 6) >= stats4]; %Identify the noisy datasets
 end
-noisyDatasetsIndices = all(noisyDatasetsIndices')';
+%START: A strict method to find noisy data sets (strict because all data
+%record sets must agree on a data record set as a noisy data set)
 
-%START An alternative method to determine noisy data records
-% tempIndices = false(size(noisyDatasetsIndices, 1), 1);
-% for i=1:size(noisyDatasetsIndices, 1)
-%     tempIndices(i) = sum(noisyDatasetsIndices(i, :)) >= size(noisyDatasetsIndices, 2)/1.5;
-% end
-%END An alternative method to determine noisy data records
+% noisyDatasetsIndices = all(noisyDatasetsIndices')';
+
+%END: A strict method to find noisy data sets (strict because all data
+%record sets must agree on a data record set as a noisy data set)
+
+%START: An alternative method to determine noisy data records based on
+%majority votes
+tempIndices = false(size(noisyDatasetsIndices, 1), 1);
+for i=1:size(noisyDatasetsIndices, 1)
+    tempIndices(i) = sum(noisyDatasetsIndices(i, :)) >= size(noisyDatasetsIndices, 2)/1.5;
+end
+noisyDatasetsIndices = tempIndices;
+%END: An alternative method to determine noisy data records based on
+%majority votes
 
 validDataRecords = cell(size(dataRecord, 1), 2);
 for i=1:size(validDataRecords, 1)
    validDataRecords{i, 1} = cell(sum(~noisyDatasetsIndices), 2); 
 end
-indices = find(~noisyDatasetsIndices);
+indices = find(~noisyDatasetsIndices); %Find the indices of valid data record sets
 for i=1:size(dataRecord, 1)
     for j=1:sum(~noisyDatasetsIndices)
         validDataRecords{i, 1}{j, 1} = dataRecord{i, 1}{indices(j), 1};

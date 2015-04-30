@@ -25,7 +25,7 @@ if(size(timeGranularity, 1) > 1)
        timeGranularity = timeGranularity(1, :); %Take the first row only
    end
 end
-if(size(timeGranularity, 2) == 1 && timeGranularity < 0)
+if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || ~isempty(timeGranularity))
     timeGranularity = 0;
 end
 
@@ -63,9 +63,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             end
             
             if(size(timeGranularity, 2) > 1)
-                validDataRecords = procIdentifyNoisyDatasets(timeGranulatedDatarecords);
+                timeGranulatedDatarecords = procIdentifyNoisyDatasets(timeGranulatedDatarecords);
                 for i=1:size(timeGranularity, 2)
-                   HMMmodel{i, 1} = genHMM(validDataRecords{i, 1}, timeGranularity(i), expType);
+                   HMMmodel{i, 1} = genHMM(timeGranulatedDatarecords{i, 1}, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);

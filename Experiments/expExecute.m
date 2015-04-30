@@ -25,7 +25,7 @@ if(size(timeGranularity, 1) > 1)
        timeGranularity = timeGranularity(1, :); %Take the first row only
    end
 end
-if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || ~isempty(timeGranularity))
+if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranularity))
     timeGranularity = 0;
 end
 
@@ -71,19 +71,6 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    simulationResult{i, 2} = timeGranularity(i);
                 end
             end
-%             if(expType == 1) %Experiments numbered "1" are run using simple hidden Markov models
-%                 if(size(timeGranularity, 2) == 1 && timeGranularity > 0)
-%                     HMMmodel = genHMM(dataRecord, timeGranularity, expType);
-%                     simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
-%                 else
-%                     for i=1:length(timeGranularity)
-%                         HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
-%                         HMMmodel{i, 2} = timeGranularity(i);
-%                         simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
-%                         simulationResult{i, 2} = timeGranularity(i);
-%                     end
-%                 end
-%             end
         else
             error('The file "Complete 207 users data.mat" does not exist in the source directory "%s".\n', pwd)
         end
@@ -94,6 +81,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
+%                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
+               %TODO: The format of storing data record sets has change.
+               %Please write the appropricate code to deal with it
                for i=1:length(timeGranularity)
                    timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
                    timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
@@ -106,6 +96,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    simulationResult{i, 2} = timeGranularity(i);
                end
            else
+               %TODOL: What if the user inputs a vector of time
+               %granularities instead of a single one? Please resolve the
+               %issue of not being able to accept a vector!!
                timeGranulatedDataVarName = num2words(timeGranularity, 'hyphen', true);
                timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
                timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);

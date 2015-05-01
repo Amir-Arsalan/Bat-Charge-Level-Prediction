@@ -12,37 +12,6 @@ time-granulated data set
 of model to be learned over the data
 %}
 
-%% Finding users with useless data
-%{
-By useless I mean their phones has been used in a weired way (e.g. been
-almost 100% idle)
-%}
-
-%TODO: Write an algorithm to find noisy data sets which is robust for all time-granularities
-
-% labeledDataRecords = [];
-% noisyDatasetsIndices = false(size(dataRecords, 1), 1); %Stores the logical indices of datasets considered as invalid with some criteria
-% datasetFeatureMatrix = zeros(size(dataRecords, 1), 7);
-% for i=1:size(dataRecords, 1)
-%     singleUserData = dataRecords{i, 2};
-%     singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an added column of "charge/discharge rate"
-%     datasetFeatureMatrix(i, 1) = size(dataRecords{i, 1}, 1) / size(singleUserData, 1); %The ratio of 
-%     datasetFeatureMatrix(i, 2) = sum(singleUserData(:, 8))/size(singleUserData, 1); %The ratio of sum of "existing" records to "all" records
-%     datasetFeatureMatrix(i, 3) = sum(singleUserData(:, end) == 0) / size(singleUserData, 1);
-%     datasetFeatureMatrix(i, 4) = sum(singleUserData(:, 7) == 1 & singleUserData(:, 6) > 97 & singleUserData(:, end) == 0) / size(singleUserData, 1); %The ratio of number of records indicating that the phone is fully charged and is in idle state to total number of records
-%     datasetFeatureMatrix(i, 5) = sum(singleUserData(:, 7) == 1)/size(singleUserData, 1); %Ratio of the number of records that the phone has been plugged into charge to total number of records
-%     datasetFeatureMatrix(i, 6) = mean(singleUserData(:, 9));
-%     datasetFeatureMatrix(i, 7) = std(singleUserData(:, 9));
-%     noisyDatasetsIndices(i) = singleUserData(end, 1) < 100 && (datasetFeatureMatrix(i, 2) < .25 || datasetFeatureMatrix(i, 3) > .38);
-% end
-% 
-% validDatasets = cell(sum(~noisyDatasetsIndices), 2);
-% indices = find(~noisyDatasetsIndices);
-% for i=1:sum(~noisyDatasetsIndices)
-%     validDatasets{i, 1} = dataRecords{indices(i), 1};
-%     validDatasets{i, 2} = dataRecords{indices(i), 2};
-% end
-
 
 %% Function code starts here
 
@@ -156,6 +125,11 @@ if(expType == 1) %Tag each single record (No hierarchical model)
     % Start tagging records
     
     labeledDataRecords = allUsersDataRecords;
+elseif(expType == 2)
+    %TODO: Learn one model for each user
+    
+elseif(expType == 3)
+    %TODO: 
     
 end
 

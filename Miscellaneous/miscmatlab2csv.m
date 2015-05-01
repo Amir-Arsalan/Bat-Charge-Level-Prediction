@@ -1,4 +1,4 @@
-function st = matlab2csv(input, target, mode, featureNames)
+function st = miscmatlab2csv(input, target, mode, featureNames)
 % Convert matlab data to a compatible .csv file for use by weka.
 %
 % input          - An n-by-d matrix with n, d-featured examples.

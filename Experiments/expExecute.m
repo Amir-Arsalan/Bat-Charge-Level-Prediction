@@ -75,9 +75,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             error('The file "Complete 207 users data.mat" does not exist in the source directory "%s".\n', pwd)
         end
     else %If not from scracth (want to use a pre-stored data set)
-        if(exist('Recent timeGranulated Data.mat', 'file'))
+        if(exist('time granulated Data.mat', 'file'))
            if(timeGranularity == 0)
-               load('Recent timeGranulated Data.mat'); %Load all available datasets with different time granularities stored in it
+               load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
                timeGranularityIndices = sortrows(timeGranularityIndices, 2);
@@ -91,8 +91,8 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
                end
-           else %If the user has input a timeGranularity (or a vector of timeGranularity)
-               load('Recent timeGranulated Data.mat'); %Load all available datasets with different time granularities stored in it
+           else %If the user has input a timeGranularity (or a vector of timeGranularity) and the user wants to use the pre-labeled data record sets that are already stored
+               load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
                if(~isempty(timeGranularityIndices))
                    timeGranularityIndices = sortrows(timeGranularityIndices, 2);

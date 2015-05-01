@@ -27,8 +27,8 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         the charge level is 0 but the battery charge level is higher than 
         0 and the phone has not been died out. In a more complex model if 
         the hidden variable is dependent on charge level we can assume that
-        when the charge level is between 0 and the discharge rate is 0
-        also, then the phone has been died out definately.
+        when the charge level is between 0 and 3,s say) the discharge rate 
+        is 0 also, then the phone has been died out definately.
         (2) Idle: When the discharge rate is > 0 & <= 0.35/(10/granularity)
         (3) Low: When the discharge rate is > 0.35/(10/granularity) & <= 0.99/(10/granularity)
         (4) Med-Low: When the discharge rate is > 0.99/(10/granularity) & < 2/(10/granularity)
@@ -50,7 +50,7 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     emission = cell(1, 12);
     initialDist = zeros(1, 12);
     
-    for i=1:12
+    for i=1:12 %Since we are sure we have 12 states
        tempChargeRates = labeledDataRecord(labeledDataRecord(:, 10) == i, 9);
        emission{1, i} = [mean(tempChargeRates), std(tempChargeRates)];
     end
@@ -58,11 +58,16 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     for i=1:length(usersIndex) - 1
         singleUserData = labeledDataRecord(usersIndex(i) + 1:usersIndex(i + 1), :);
         labels = double(singleUserData(:, end));
+        seq = singleUserData(:, 9);
         
         initialDist(labels(1)) = initialDist(labels(1)) + 1;
         
         for j=1:size(labels, 1) - 1
             transitionMatrix(labels(j), labels(j + 1)) = transitionMatrix(labels(j), labels(j + 1)) + 1;
+            %Note: The last label for each user/data record set does not 
+            %follow with another label. Therefore, it is discarded in
+            %calculation of transition probabilities in the transition
+            %matrix
         end
 
     end
@@ -77,6 +82,10 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     model{1, 2} = emission;
     model{1, 3} = initialDist;
     
-    fprintf('Learning model for experiment type ''%d'' (A simple HMM with the parameters learned through MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
+    fprintf('Learning model for experiment type ''%d'' (A simple HMM with the parameters learned via MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
 
+elseif(expType == 2)
+    %{
+    TODO: Learn a model for each user
+    %}
 end

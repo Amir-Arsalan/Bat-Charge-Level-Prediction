@@ -1,4 +1,4 @@
-function [recentFiles] = GetRecentFiles()
+function [recentFiles] = miscGetRecentFiles()
 
 %{
 This function returns a list of files that have been recently closed in

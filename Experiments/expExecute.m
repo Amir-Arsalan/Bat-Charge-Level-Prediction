@@ -87,38 +87,29 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                timeGranularityIndices = timeGranularityIndices(:, 1);
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
-%                for i=1:length(timeGranularity)
-%                    timeGranulatedDataVarName = num2words(timeGranularity(i), 'hyphen', true);
-%                    timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
-%                    timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
-%                    dataRecord = eval([timeGranulatedDataVarName, ';']);
-% %                    eval(['clear', timeGranulatedDataVarName, ';']);
-%                    HMMmodel{i, 1} = genHMM(dataRecord, timeGranularity(i), expType);
-%                    HMMmodel{i, 2} = timeGranularity(i);
-%                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
-%                    simulationResult{i, 2} = timeGranularity(i);
-%                end
                 for i=1:length(timeGranularityIndices)
                    HMMmodel{i, 1} = genHMM(timeGranulatedDatarecords{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
                    simulationResult{i, 2} = timeGranularity(i);
                end
-           else
-               %TODOL: What if the user inputs a vector of time
-               %granularities instead of a single one? Please resolve the
-               %issue of not being able to accept a vector!!
-               timeGranulatedDataVarName = num2words(timeGranularity, 'hyphen', true);
-               timeGranulatedDataVarName = strcat(timeGranulatedDataVarName, 'Min');
-               timeGranulatedDataVarName = miscReplaceWhitespaceWithHyphen(timeGranulatedDataVarName);
-               warning ('off','all');
-               load('time-granulated data.mat', timeGranulatedDataVarName);
-               if(exist(timeGranulatedDataVarName, 'var'))
-                    dataRecord = eval([timeGranulatedDataVarName, ';']); 
-                    HMMmodel = genHMM(dataRecord, timeGranularity, 1);
-                    simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
+           else %If the user has input a timeGranularity (or a vector of timeGranularity)
+               load('Recent timeGranulated Data.mat'); %Load all available datasets with different time granularities stored in it
+               timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
+               if(~isempty(timeGranularityIndices))
+                   timeGranularityIndices = sortrows(timeGranularityIndices, 2);
+                   timeGranularity = timeGranularityIndices(:, 2);
+                   timeGranularityIndices = timeGranularityIndices(:, 1);
+                   HMMmodel = cell(length(timeGranularity), 2);
+                   simulationResult = cell(length(timeGranularity), 2);
+                   for i=1:length(timeGranularityIndices)
+                       HMMmodel{i, 1} = genHMM(timeGranulatedDatarecords{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
+                       HMMmodel{i, 2} = timeGranularity(i);
+                       simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+                       simulationResult{i, 2} = timeGranularity(i);
+                   end
                else
-                   error('The stored data records does not contain %s dataset that you are looking for. Please try with a time-granularityof 3, 5, 10, 15, 20, 30 or start the program from scratch and input your desired time-granularity\n', timeGranulatedDataVarName);
+                   error('Unable to find data record sets associated with the entered time granularities. Make sure you are entering the correct time granularities');
                end
            end
         else

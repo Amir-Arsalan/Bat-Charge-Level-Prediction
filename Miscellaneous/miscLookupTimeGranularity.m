@@ -35,4 +35,8 @@ for i=1:length(timeGranularity)
     end
 end
 
+if(1 && all(timeGranularityIndices(:) == 0))
+   timeGranularityIndices = []; 
+end
+
 end

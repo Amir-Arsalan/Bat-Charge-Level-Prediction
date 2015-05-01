@@ -75,10 +75,8 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             error('The file "Complete 207 users data.mat" does not exist in the source directory "%s".\n', pwd)
         end
     else %If not from scracth (want to use a pre-stored data set)
-%         if(exist('time-granulated data.mat', 'file'))
         if(exist('Recent timeGranulated Data.mat', 'file'))
            if(timeGranularity == 0)
-%                load('time-granulated data.mat'); %Load all available datasets with different time granularities stored in it
                load('Recent timeGranulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);

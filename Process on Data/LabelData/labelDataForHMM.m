@@ -125,11 +125,6 @@ if(expType == 1) %Tag each single record (No hierarchical model)
     % Start tagging records
     
     labeledDataRecords = allUsersDataRecords;
-elseif(expType == 2)
-    %TODO: Learn one model for each user
-    
-elseif(expType == 3)
-    %TODO: 
     
 end
 

@@ -20,7 +20,7 @@ as the first column to the r by x matrix and stores the day number in which
 the record has been collected.
 %}
 
-%% Code
+%% Function code starts here
 
 acceptableDevices = true(size(dataset, 1), 1); %Contains the deviceIDs to process further for modeling and analysis. The device IDs with having than 5 days will not be considered in the analysis
 batCol = find(strcmp('PhoneLabSystemAnalysis-BatteryChange', tags)) + 1; %Find the column number of the tag. The +1 is due to the structure of the dataset where the first column contains the device only

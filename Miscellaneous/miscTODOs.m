@@ -4,18 +4,18 @@ TODOs:
 - genHMM.m:
     - expType == 2: Learn model type 1, but the difference is the observation is
     a GMM instead of one Normal distribution
-    - expType == 3: Learn a model for each user
-    - expType == 4: Learn a model for each user dependent on time of day or
-    battery charge level
-    - expType == 4: Learn model type 3, with observation of GMM
-    - expType == 5: Learn a model dependent on time of day
-    - expType == 6: expType 5 + Learn a model dependent on battery charge lvl
+    - expType = 3: Learn a model for each user
+    - expType = 4: Learn a model for each user dependent on battery charge level
+    - expType = 4: Learn model type 4, with GMM observations
+    - expType = 5: Learn a model dependent on time of day
+    - expType = 6: expType 5 + dependency on battery charge lvl
+    - expType = 7: expType 5 with GMM observations
+    - expType = 8: expType 6 with GMM observations
 
 - miscPlotResults.m:
     - (Done) Plot time consistent simulation result
     - (Done) Plot the mean and variance in one plot
-    - Create a plot function to make the code more readable
-    - Plot means of batterh charge levels of users against mean of each
+    - Plot means of battery charge levels of users against mean of each
     simulation for each time granularity
 
 - miscPlotWithSameTimeGranularity.m
@@ -25,4 +25,7 @@ TODOs:
 
 - Missing value problem:
     - Fill the missing values with learned model
+
+- Maybe later sometime:
+    - Create a separate plot function that gets plot() arguments with the goal of making the code more readable
 %}

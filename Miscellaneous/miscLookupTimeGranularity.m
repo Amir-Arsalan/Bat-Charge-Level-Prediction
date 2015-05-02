@@ -1,7 +1,7 @@
 function timeGranularityIndices = miscLookupTimeGranularity(dataRecord, timeGranularity)
 %{
-This function finds the indices of elements of timeGranularity in the
-dataRecord cell
+This function finds the indices of elements of the desired timeGranularity 
+in the dataRecord cell
 
 Inputs:
 - dataRecord: A cell of m by 2 where m is the number of different data set

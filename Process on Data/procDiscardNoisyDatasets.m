@@ -1,9 +1,9 @@
-function validDataRecords = procIdentifyNoisyDatasets(dataRecord)
+function validDataRecords = procDiscardNoisyDatasets(dataRecord)
 
 %{
-This function identifies the data sets that are highly noisy (have low
-entropy intuitively) and will discard them in further processes (e.g.
-learning models over data and ... )
+This function identifies and then discards the data sets that are highly 
+noisy (have low entropy intuitively) and will discard them in further 
+processes (e.g. learning models over data and ... )
 
 Input:
 - dataRecords: A cell of m by 2 containing all users data records. The 1st

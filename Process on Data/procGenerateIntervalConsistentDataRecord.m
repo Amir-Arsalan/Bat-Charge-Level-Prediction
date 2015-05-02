@@ -1,6 +1,6 @@
-function timeConsistentSimulationResult = miscPlotWithSameTimeGranularity(simulationResult, timeGranularity)
+function intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity)
 %{
-This function generates
+This function generates interval-consistent data record sets
 
 Inputs:
 - simulationResults: It is either a matrix of n x m where n is the number
@@ -10,16 +10,16 @@ granularity selected for the simulation).
 sets
 
 Output:
-- timeGranularityConsistentSimulationResults: The simulation results with a
+- intervalConsistentSimulationResult: The simulation results with a
 consistent time granularity equal to the smallest time granularity
 
 %}
 
 %% Function code starts here
 
-timeConsistentSimulationResult = cell(size(simulationResult, 1), 2);
-timeConsistentSimulationResult{1, 1} = simulationResult{1, 1};
-timeConsistentSimulationResult{1, 2} = simulationResult{1, 2};
+intervalConsistentSimulationResult = cell(size(simulationResult, 1), 2);
+intervalConsistentSimulationResult{1, 1} = simulationResult{1, 1};
+intervalConsistentSimulationResult{1, 2} = simulationResult{1, 2};
 smallestTimeGranularity = timeGranularity(1); %Since we know timeGranularity is sorted in ascending order
 
 for i=2:size(simulationResult, 1)
@@ -38,8 +38,8 @@ for i=2:size(simulationResult, 1)
           firstIndex = lastIndex;
       end
    end
-   timeConsistentSimulationResult{i, 1} = interpolatedDataRecordSet;
-   timeConsistentSimulationResult{i, 2} = timeGranularity(i);
+   intervalConsistentSimulationResult{i, 1} = interpolatedDataRecordSet;
+   intervalConsistentSimulationResult{i, 2} = timeGranularity(i);
 end
 
 end

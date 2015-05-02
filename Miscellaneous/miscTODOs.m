@@ -12,7 +12,13 @@ TODOs:
     expType == 6: expType 5 + Learn a model dependent on battery charge lvl
 
 - miscPlotResults.m:
-    Merge graphs of different time granularities
+    Plot time consistent simulation result
+    Plot the mean and variance in one plot
+
+- miscPlotWithSameTimeGranularity.m
+    (Done) Interpolate simulation results of all time granularities within
+    the smallest time granularity to ease plotting their means and standard
+    deviations in one elaborative graph
 
 - Missing value problem:
     Fill the missing values with learned model

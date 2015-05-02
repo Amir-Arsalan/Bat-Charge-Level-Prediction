@@ -58,7 +58,6 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     for i=1:length(usersIndex) - 1
         singleUserData = labeledDataRecord(usersIndex(i) + 1:usersIndex(i + 1), :);
         labels = double(singleUserData(:, end));
-        seq = singleUserData(:, 9);
         
         initialDist(labels(1)) = initialDist(labels(1)) + 1;
         
@@ -84,8 +83,4 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     
     fprintf('Learning model for experiment type ''%d'' (A simple HMM with the parameters learned via MLE) for the data with time-granularity of %d has been done successfully\n', expType, timeGranularity);
 
-elseif(expType == 2)
-    %{
-    TODO: Learn a model for each user
-    %}
 end

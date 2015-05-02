@@ -80,7 +80,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
-               timeGranularityIndices = sortrows(timeGranularityIndices, 2);
+               timeGranularityIndices = sortrows(timeGranularityIndices, 2); %Sort with respect to the time granularity colummn
                timeGranularity = timeGranularityIndices(:, 2);
                timeGranularityIndices = timeGranularityIndices(:, 1);
                HMMmodel = cell(length(timeGranularity), 2);
@@ -95,7 +95,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDatarecords, timeGranularity);
                if(~isempty(timeGranularityIndices))
-                   timeGranularityIndices = sortrows(timeGranularityIndices, 2);
+                   timeGranularityIndices = sortrows(timeGranularityIndices, 2); %Sort with respect to the time granularity colummn
                    timeGranularity = timeGranularityIndices(:, 2);
                    timeGranularityIndices = timeGranularityIndices(:, 1);
                    HMMmodel = cell(length(timeGranularity), 2);

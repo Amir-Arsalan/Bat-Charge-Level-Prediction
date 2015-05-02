@@ -58,7 +58,25 @@ else %If the simulations are stored in a cell of h x 2
         end
     elseif(nargin == 3) %If there are three input arguments to the function
         if(succinct == 1)
-            timeConsistentSimulationResult = miscPlotWithSameTimeGranularity(simulationResult, timeGranularity(1));
+            timeConsistentSimulationResult = miscPlotWithSameTimeGranularity(simulationResult, timeGranularity);
+            means = zeros(size(timeConsistentSimulationResult, 1), size(timeConsistentSimulationResult{1, 1}, 2));
+            stds = zeros(size(timeConsistentSimulationResult, 1), size(timeConsistentSimulationResult{1, 1}, 2));
+            for i=1:size(timeConsistentSimulationResult, 1)
+                means(i, :) = mean(timeConsistentSimulationResult{i, 1});
+                stds(i, :) = std(timeConsistentSimulationResult{i, 1});
+            end
+            figure; subplot(2, 2, [1, 2])
+            plot(1:size(means, 2), means);
+            title(sprintf('Means of simulations with time granularities %s shown', strcat(strcat('[', num2str(timeGranularity')), ']')))
+            xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(1)));
+            ylabel('Charge Level');
+            ylim([0 100])
+            subplot(2, 2, [3, 4])
+            plot(1:size(stds, 2), stds);
+            title(sprintf('Standard Deviations of simulations with time granularities %s shown', strcat(strcat('[', num2str(timeGranularity')), ']')))
+            xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(1)));
+            ylabel('Charge Level');
+            ylim([0 100])
         else
             miscPlotResults(simulationResult, timeGranularity);
         end

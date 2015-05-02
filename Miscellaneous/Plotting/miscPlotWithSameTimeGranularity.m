@@ -1,4 +1,4 @@
-function timeConsistentSimulationResult = miscPlotWithSameTimeGranularity(simulationResult, smallestTimeGranularity)
+function timeConsistentSimulationResult = miscPlotWithSameTimeGranularity(simulationResult, timeGranularity)
 %{
 This function generates
 
@@ -20,16 +20,16 @@ consistent time granularity equal to the smallest time granularity
 timeConsistentSimulationResult = cell(size(simulationResult, 1), 2);
 timeConsistentSimulationResult{1, 1} = simulationResult{1, 1};
 timeConsistentSimulationResult{1, 2} = simulationResult{1, 2};
+smallestTimeGranularity = timeGranularity(1); %Since we know timeGranularity is sorted in ascending order
 
 for i=2:size(simulationResult, 1)
    originalDataRecordSet = single(simulationResult{i, 1});
    interpolatedDataRecordSet = zeros(size(originalDataRecordSet, 1), 2880/smallestTimeGranularity);
-   timeGranularity = simulationResult{i, 2};
    for j=1:size(interpolatedDataRecordSet, 1)
        interpolatedDataRecordSet(j, 1) = originalDataRecordSet(j, 1);
        firstIndex = 1;
       for k=1:size(originalDataRecordSet, 2)
-          lastIndex = round(timeGranularity/smallestTimeGranularity * k);
+          lastIndex = round(timeGranularity(i)/smallestTimeGranularity * k);
           interpolatedDataRecordSet(j, lastIndex) = originalDataRecordSet(j, k);
           if(lastIndex - firstIndex > 1)
               numbersInBetween = linspace(interpolatedDataRecordSet(j, firstIndex), interpolatedDataRecordSet(j, lastIndex), lastIndex - firstIndex + 1);
@@ -38,6 +38,8 @@ for i=2:size(simulationResult, 1)
           firstIndex = lastIndex;
       end
    end
+   timeConsistentSimulationResult{i, 1} = interpolatedDataRecordSet;
+   timeConsistentSimulationResult{i, 2} = timeGranularity(i);
 end
 
 end

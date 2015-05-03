@@ -1,4 +1,4 @@
-function expExecute(fromScratch, expType, timeGranularity, initChargeLvl)
+function expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays)
 
 %% Function Description
 %{
@@ -14,6 +14,8 @@ already stored.
 granularity(ies) at which the expriments will run. If is set to zero the 
 experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 - initChargeLvl: The initial charge level from which the simulations start
+- numOfDays: A posotive, preferably integer, quantity that specifies the 
+number of days for which the simulation will run
 
 Output:
 Plot the simulation result
@@ -21,6 +23,9 @@ Plot the simulation result
 
 %% The program code
 
+if(numOfDays <= 0)
+    numOfDays = 1;
+end
 
 if(size(timeGranularity, 1) > 1)
    if(size(timeGranularity, 2) == 1)
@@ -46,7 +51,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 timeGranulatedDataRecord{1, 2} = timeGranularity;
                 validDataRecords = procDiscardNoisyDatasets(timeGranulatedDataRecord);
                 HMMmodel = genHMM(validDataRecords, timeGranularity, expType);
-                simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity);
+                simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfDays);
             else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
                    timeGranularity = [3, 5, 10, 15, 20, 30];
@@ -71,7 +76,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 for i=1:size(timeGranularity, 2)
                    HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{i, 1}, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
-                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);
                 end
             end
@@ -92,7 +97,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 for i=1:length(timeGranularityIndices)
                    HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
                    HMMmodel{i, 2} = timeGranularity(i);
-                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);
                end
            else %If the user has input a timeGranularity (or a vector of timeGranularity) and the user wants to use the pre-labeled data record sets that are already stored
@@ -107,7 +112,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    for i=1:length(timeGranularityIndices)
                        HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
                        HMMmodel{i, 2} = timeGranularity(i);
-                       simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i));
+                       simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                        simulationResult{i, 2} = timeGranularity(i);
                    end
                else

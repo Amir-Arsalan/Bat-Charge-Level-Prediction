@@ -1,13 +1,16 @@
-function intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity)
+function intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays)
 %{
 This function generates interval-consistent data record sets
 
 Inputs:
 - simulationResults: It is either a matrix of n x m where n is the number
 of simulations and m is the number of intervals (dependent on time
-granularity selected for the simulation).
-- smallestTimeGranularity: The smallest time granularity in the data record
-sets
+granularity selected for the simulation) or a cell of t by 2 where each 
+element of the first column contains an n x m matrix and each element of
+the second column stores the associated time granularity.
+- timeGranularity: A vector of time granularity sorted in ascending order
+- numOfDays: A posotive, preferably integer, quantity that specifies the 
+number of days for which the simulation will run
 
 Output:
 - intervalConsistentSimulationResult: The simulation results with a
@@ -24,7 +27,7 @@ smallestTimeGranularity = timeGranularity(1); %Since we know timeGranularity is 
 
 for i=2:size(simulationResult, 1)
    originalDataRecordSet = single(simulationResult{i, 1});
-   interpolatedDataRecordSet = zeros(size(originalDataRecordSet, 1), 2880/smallestTimeGranularity);
+   interpolatedDataRecordSet = zeros(size(originalDataRecordSet, 1), ceil(1440/smallestTimeGranularity) * numOfDays);
    for j=1:size(interpolatedDataRecordSet, 1)
        interpolatedDataRecordSet(j, 1) = originalDataRecordSet(j, 1);
        firstIndex = 1;

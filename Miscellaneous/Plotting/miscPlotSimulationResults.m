@@ -1,4 +1,4 @@
-function miscPlotSimulationResults(simulationResult, timeGranularity, succinct, userData)
+function miscPlotSimulationResults(simulationResult, timeGranularity, succinct, userData, numOfDays)
 
 %{
 Plots the simulation results
@@ -11,6 +11,8 @@ simulations and m is the number of intervals (dependent on time granularity
 - succinct: Takes the values 0 or 1. Determines whether the plots should be succinct or not
 - userData: Contains mean and standard deviation of selected (based on
 expType) users' battery charge levels started from an initial charge level
+- numOfDays: A posotive, preferably integer, quantity that specifies the 
+number of days for which the simulation will run
 
 
 Note: The simulation could be a cell of h x 2 cell where h corresponds to
@@ -61,7 +63,7 @@ else %If the simulations are stored in a cell of h x 2
         end
     elseif(nargin == 3) %If there are three input arguments to the function
         if(succinct == 1)
-            intervalConsistentSimulationResult = procGenerateIntervalConsistent(simulationResult, timeGranularity);
+            intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
             means = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
             stds = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
             for i=1:size(intervalConsistentSimulationResult, 1)

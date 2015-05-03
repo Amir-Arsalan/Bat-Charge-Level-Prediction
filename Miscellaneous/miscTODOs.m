@@ -1,6 +1,16 @@
 %{
 TODOs:
 
+05/03/2015:
+- miscPlotResults.m:
+    - Plot means of battery charge levels of users against mean of each
+    simulation for each time granularity
+
+- genHMM.m:
+    - expType == 2: Learn model type 1, but the difference is the observation is
+        a GMM instead of one Normal distribution
+    - expType = 3: Learn a model for each user
+
 - genHMM.m:
     - expType == 2: Learn model type 1, but the difference is the observation is
     a GMM instead of one Normal distribution

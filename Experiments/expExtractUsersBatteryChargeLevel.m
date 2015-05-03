@@ -41,7 +41,6 @@ if(expType == 1)
                if(granulatedData(k, 6) == initChargeLvl || (granulatedData(k, 6) - .83*(timeGranularity/10) < initChargeLvl && granulatedData(k, 6) + .83*(timeGranularity/10) > initChargeLvl))
                    if(miscCheckIndexExceeding(k, requiredNumberOfSequences, 0, granulatedData))
                       individualsChargeLvlSequences = [individualsChargeLvlSequences; granulatedData(k:k + requiredNumberOfSequences - 1, 6)'];
-%                       fprintf('%d, j = %d, k = %d\n', individualsChargeLvlSequences(end, 1), j, k);
                       k = k + requiredNumberOfSequences;
                    else
                        break;
@@ -56,7 +55,17 @@ if(expType == 1)
        end
        
     end
-
 end
+
+% Interpolation
+
+timeGranularity = [];
+for i=1:size(usersChargeLvlSequences, 1)
+    timeGranularity = [timeGranularity; usersChargeLvlSequences{i, 2}];
+end
+interpolatedBatChargeLvl= procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
+
+means = mean(interpolatedBatChargeLvl);
+stds = std(interpolatedBatChargeLvl);
 
 end

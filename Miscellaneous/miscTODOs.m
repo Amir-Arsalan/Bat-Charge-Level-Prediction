@@ -1,19 +1,21 @@
 %{
 TODOs:
 
-05/04/2015:
-- miscPlotResults.m:
-    - Plot means of battery charge levels of users against mean of each
-    simulation for each time granularity along with the respective legend
+05/05/2015:
+
+- RunExps.m:
+    - Write a new function named "runExps" that runs different experiments
+    by differnet parameters and evaluates the results (error and ... )
 
 - genHMM.m:
     - expType == 2: Learn model type 1, but the difference is the observation is
         a GMM instead of one Normal distribution
     - expType = 3: Learn a model for each user
 
+- miscPlotResults.m:
+    - Plot the results with different automatically chosen line styles
+
 - expHMM.m:
-    - The initial state distribution is dependent on the initial charge
-    level
     - The number of simulations should be the same as number of instances
     in the original data set with the same battery charge level
 ____________________
@@ -32,13 +34,17 @@ ____________________
 - miscPlotResults.m:
     - (Done) Plot time consistent simulation result
     - (Done) Plot the mean and variance in one plot
-    - Plot means of battery charge levels of users against mean of each
-    simulation for each time granularity
+    - (Done) Plot means of battery charge levels of users against mean of each
+    simulation for each time granularity along with the respective legend
 
 - miscPlotWithSameTimeGranularity.m
     - (Done) Interpolate simulation results of all time granularities within
     the smallest time granularity to ease plotting their means and standard
     deviations in one elaborative graph
+
+- expHMM.m:
+    - (Done) The initial state distribution is dependent on the initial charge
+    level
 
 - Missing value problem:
     - Fill the missing values with learned model

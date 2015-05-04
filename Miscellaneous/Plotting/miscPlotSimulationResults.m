@@ -95,7 +95,7 @@ else %If the simulations are stored in a cell of h x 2
                 means(i, :) = mean(intervalConsistentSimulationResult{i, 1});
                 stds(i, :) = std(intervalConsistentSimulationResult{i, 1});
             end
-%             figure; subplot(2, 2, [1, 2])
+
             figure; plot(1:size(means, 2), means);
             hold on
             plot(1:size(means, 2), originMeans);
@@ -103,8 +103,17 @@ else %If the simulations are stored in a cell of h x 2
             xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
             ylabel('Charge Level');
             ylim([0 100])
+            
+            temp = strcat(horzcat('''Prediction Mean (', num2str(timeGranularity(1))), ')''');
+            for i=2:length(timeGranularity)
+            temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Mean (' ,num2str(timeGranularity(i))))), ')''');
+            end
+            for i=1:size(originMeans, 1)
+                temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Mean (' ,num2str(timeGranularity(i))))), ')''');
+            end
+            eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
             hold off
-%             subplot(2, 2, [3, 4])
+            
             figure; plot(1:size(stds, 2), stds);
             hold on
             plot(1:size(stds, 2), originStds);
@@ -113,11 +122,16 @@ else %If the simulations are stored in a cell of h x 2
             ylabel('Charge Level');
             ylim([0 45])
             
-%             %Flexible Legend Creator
-%             temp = strcat(horzcat('''Predicted Mean of ', num2str(timeGranularity(1))), '''');
-%             for i=2:length(timeGranularity)
-%             temp = strcat(strcat(temp, strcat(', ''', horzcat('Predicted Mean of ' ,num2str(timeGranularity(i))))), '''');
-%             end
+            temp = strcat(horzcat('''Prediction Std (', num2str(timeGranularity(1))), ')''');
+            for i=2:length(timeGranularity)
+            temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Std (' ,num2str(timeGranularity(i))))), ')''');
+            end
+            for i=1:size(originMeans, 1)
+                temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Std (' ,num2str(timeGranularity(i))))), ')''');
+            end
+            eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
+            hold off
+            
         else
             miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
         end

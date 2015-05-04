@@ -18,15 +18,17 @@ Output:
     - simulation: Simulation results given the model and initial charge lvl
 %}
 
-simulation = zeros(400, ceil((1440/timeGranularity) * numOfDays)); %400 Simulations
+numOfSimulations = 800;
+simulation = zeros(numOfSimulations, ceil((1440/timeGranularity) * numOfDays));
 simulation(:, 1) = initChargeLvl;
 
 transition = HMMmodel{1, 1};
 emission = HMMmodel{1, 2};
-initial = HMMmodel{1, 3};
+initialDist = HMMmodel{1, 3};
 
-for i=1:400 %Do it for 400 simulations
-    state = initializeStartState(initChargeLvl);
+for i=1:numOfSimulations %from 1 to # of simulations
+%     state = initializeStartState(initChargeLvl);
+    state = numberLine_rouletteWheel(initialDist);
     for j=2:ceil((1440/timeGranularity) * numOfDays)
         emitParams = emission{1, state};
         emittedChargeRate = normrnd(emitParams(1), emitParams(2));

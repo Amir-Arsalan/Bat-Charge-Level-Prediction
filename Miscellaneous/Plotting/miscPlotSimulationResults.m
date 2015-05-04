@@ -96,16 +96,19 @@ else %If the simulations are stored in a cell of h x 2
                 stds(i, :) = std(intervalConsistentSimulationResult{i, 1});
             end
 %             figure; subplot(2, 2, [1, 2])
-            hold on
             figure; plot(1:size(means, 2), means);
+            hold on
             plot(1:size(means, 2), originMeans);
-            title(sprintf('Means of simulations and real data with time granularities of %s minutes shown', strcat(strcat('[', num2str(timeGranularity')), ']')))
+            title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
             xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
             ylabel('Charge Level');
             ylim([0 100])
+            hold off
 %             subplot(2, 2, [3, 4])
             figure; plot(1:size(stds, 2), stds);
-            title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown', strcat(strcat('[', num2str(timeGranularity')), ']')))
+            hold on
+            plot(1:size(stds, 2), originStds);
+            title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
             xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
             ylabel('Charge Level');
             ylim([0 45])

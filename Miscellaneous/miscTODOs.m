@@ -14,6 +14,8 @@ TODOs:
 - expHMM.m:
     - The initial state distribution is dependent on the initial charge
     level
+    - The number of simulations should be the same as number of instances
+    in the original data set with the same battery charge level
 ____________________
 
 - genHMM.m:

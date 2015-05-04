@@ -1,4 +1,4 @@
-function model = genHMM(dataRecords, timeGranularity, expType)
+function model = genHMM(timeGranulatedDataRecord, timeGranularity, expType, initChargeLvl, exactMatch, numOfDays)
 
 %{
 This function generates a model to be used for simulation porpuses later
@@ -8,13 +8,21 @@ Inputs:
 - dataRecord: An m by 2 matrix where m is the number of time-granulated 
 records for time series data and n is the number of attributes for each
 record
-- timeGranularity: The time granularity of the data record
+- timeGranularity: The time granularity of the data record sets
 - expType: Determines the model to be learned over the input data record
 
     If the expType is:
         - One(1): The model learned in this experiment type (expType)
         is a simple hidden Markod model (HMM) with 12 pre-defined states
         and the set of parameters learned via Maximum Likelihood Estimate (MLE)
+
+- initChargeLvl: The initial charge level from which the user battery 
+charge level sequence extraction begins
+- exactMatch: Takes on values of 1 or 0. If 1 the function select the 'start
+charge levels' equal to initChargeLvl exactly. If not, the function selects
+the 'start charge levels' with a boundary of initChargeLvl.
+- numOfDays: A posotive, preferably integer, quantity that specifies the 
+number of days for which the simulation will run
 
 %}
 
@@ -44,7 +52,7 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
-    [labeledDataRecord, usersIndex] = labelDataForHMM(dataRecords, timeGranularity, expType);
+    [labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
     
     transitionMatrix = zeros(12, 12);
     emission = cell(1, 12);
@@ -77,6 +85,7 @@ if(expType == 1) %First model (a simple HMM with 12 states)
        transitionMatrix(i, :) = transitionMatrix(i, :) / sum(transitionMatrix(i, :)); 
     end
     
+    initialDist = procCalcInitialDist(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays); %This line of code replaces the previous 'initialDist' with a new one which depends on the initial battery charge level for simulation
     model{1, 1} = transitionMatrix;
     model{1, 2} = emission;
     model{1, 3} = initialDist;

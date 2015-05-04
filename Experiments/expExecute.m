@@ -26,6 +26,8 @@ data and using it for simulation
 %}
 
 %% The program code
+exactMatch = 0;
+succinct = 1;
 
 if(numOfDays <= 0)
     numOfDays = 1;
@@ -72,7 +74,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 timeGranulatedDataRecord{1, 1} = procStart(Dataset, requestedTags, timeGranularity);
                 timeGranulatedDataRecord{1, 2} = timeGranularity;
                 validDataRecords = procDiscardNoisyDatasets(timeGranulatedDataRecord);
-                HMMmodel = genHMM(validDataRecords{1, 1}, timeGranularity, expType);
+                HMMmodel = genHMM(validDataRecords{1, 1}, timeGranularity, expType, example);
                 simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfDays);
             else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
@@ -132,7 +134,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    HMMmodel = cell(length(timeGranularity), 2);
                    simulationResult = cell(length(timeGranularity), 2);
                    for i=1:length(timeGranularityIndices)
-                       HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
+                       HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                        HMMmodel{i, 2} = timeGranularity(i);
                        simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                        simulationResult{i, 2} = timeGranularity(i);
@@ -147,7 +149,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
     end
     
     if(plotSimResult == 1)
-        miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, 1, 1, expType, numOfDays);
+        miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, succinct, exactMatch, expType, numOfDays);
     end
     
 end

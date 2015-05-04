@@ -1,4 +1,4 @@
-function miscPlotSimulationResults(simulationResult, timeGranularity, succinct, userData, numOfDays)
+function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, succinct, numOfDays)
 
 %{
 Plots the simulation results
@@ -20,6 +20,8 @@ number of time-granularities for which simulation is done and the second
 column stores the time-granularity associated with the simulation result
 %}
 
+[originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, initChargeLvl, 0, 1, numOfDays);
+% load('tempStats.mat');
 if(~iscell(simulationResult))
     subplot(2, 2, 1)
     plot(1:size(simulationResult(1, :), 2), simulationResult(1:5, :))
@@ -40,7 +42,7 @@ if(~iscell(simulationResult))
     ylabel('Charge Level');
     ylim([0 100])
 else %If the simulations are stored in a cell of h x 2
-    if(nargin == 2)
+    if(nargin == 5)
         for i=1:size(simulationResult, 1)
             figure; subplot(2, 2, 1)
             plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :))
@@ -61,7 +63,7 @@ else %If the simulations are stored in a cell of h x 2
             ylabel('Charge Level');
             ylim([0 100])
         end
-    elseif(nargin == 3) %If there are three input arguments to the function
+    elseif(nargin == 6)
         if(succinct == 1)
             intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
             means = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
@@ -81,9 +83,15 @@ else %If the simulations are stored in a cell of h x 2
             title(sprintf('Standard Deviations of simulations with time granularities %s minutes shown', strcat(strcat('[', num2str(timeGranularity')), ']')))
             xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(1)));
             ylabel('Charge Level');
-            ylim([0 100])
+            ylim([0 45])
+            
+%             %Dynamic Legend
+%             temp = strcat(horzcat('''Predicted Mean of ', num2str(timeGranularity(1))), '''');
+%             for i=2:length(timeGranularity)
+%             temp = strcat(strcat(temp, strcat(', ''', horzcat('Predicted Mean of ' ,num2str(timeGranularity(i))))), '''');
+%             end
         else
-            miscPlotSimulationResults(simulationResult, timeGranularity);
+            miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, numOfDays);
         end
         
     else

@@ -1,4 +1,4 @@
-function [means, stds] = expExtractUsersBatteryChargeLevel(timeGranulatedDataRecord, initChargeLvl, expType, numOfDays)
+function [means, stds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, initChargeLvl, exact, expType, numOfDays)
 %{
 This function extracts users charge levels and takes their mean and
 standard deviations
@@ -8,19 +8,19 @@ Inputs:
 first column contains a matrix of time granulated data record set and 
 each element of the second column contains an associated time granularity
 - initChargeLvl: The initial charge level from which the extraction begins
+- exact: Takes on values of 1 or 0. If 1 the function select the 'starting
+charge levels' equal to initChargeLvl exactly. If not, the function selects
+the 'starting charge levels' with a boundary of initChargeLvl.
 - expType: The experiment type
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
 
 Outputs:
-- means: Mean of extracted battery charge levels
+- means: Mean of extracted battery charge levels.
 - stds: Standard deviations of extracted batery charge levels
 %}
 
 %% Function code starts her
-
-smallestTimeGranularity = timeGranulatedDataRecord{1, 2}; %The smallest time granularity
-
 
 if(expType == 1)
     usersChargeLvlSequences = cell(size(timeGranulatedDataRecord, 1), 2);
@@ -38,7 +38,14 @@ if(expType == 1)
            diff1 = 0;
            diff2 = 0;
            while(k <= size(granulatedData, 1) - requiredNumberOfSequences)
-               if(granulatedData(k, 6) == initChargeLvl || (granulatedData(k, 6) - .83*(timeGranularity/10) < initChargeLvl && granulatedData(k, 6) + .83*(timeGranularity/10) > initChargeLvl))
+               if(exact == 1 && granulatedData(k, 6) == initChargeLvl) %The 'starting charge level' must be equal to initChargeLvl
+                   if(miscCheckIndexExceeding(k, requiredNumberOfSequences, 0, granulatedData))
+                      individualsChargeLvlSequences = [individualsChargeLvlSequences; granulatedData(k:k + requiredNumberOfSequences - 1, 6)'];
+                      k = k + requiredNumberOfSequences;
+                   else
+                       break;
+                   end
+               elseif(exact == 0 && granulatedData(k, 6) - .83*(timeGranularity/10) < initChargeLvl && granulatedData(k, 6) + .83*(timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
                    if(miscCheckIndexExceeding(k, requiredNumberOfSequences, 0, granulatedData))
                       individualsChargeLvlSequences = [individualsChargeLvlSequences; granulatedData(k:k + requiredNumberOfSequences - 1, 6)'];
                       k = k + requiredNumberOfSequences;
@@ -57,15 +64,19 @@ if(expType == 1)
     end
 end
 
-% Interpolation
-
+% Apply linear interpolation
 timeGranularity = [];
 for i=1:size(usersChargeLvlSequences, 1)
     timeGranularity = [timeGranularity; usersChargeLvlSequences{i, 2}];
 end
-interpolatedBatChargeLvl= procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
+interpolatedBatChargeLvlSequences = procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
 
-means = mean(interpolatedBatChargeLvl);
-stds = std(interpolatedBatChargeLvl);
+means = zeros(size(interpolatedBatChargeLvlSequences, 1), size(interpolatedBatChargeLvlSequences{1, 1}, 2));
+stds = zeros(size(interpolatedBatChargeLvlSequences, 1), size(interpolatedBatChargeLvlSequences{1, 1}, 2));
+
+for i=1:size(interpolatedBatChargeLvlSequences)
+   means(i, :) = mean(interpolatedBatChargeLvlSequences{i, 1});
+   stds(i, :) = std(interpolatedBatChargeLvlSequences{i, 1});
+end
 
 end

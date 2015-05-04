@@ -1,4 +1,4 @@
-function [labeledDataRecords, usersIndex] = labelDataForHMM(validDatasets, granularity, expType)
+function [labeledDataRecords, usersIndex] = labelDataForHMM(validDatasetsForOneTimeGranularity, granularity, expType)
 
 %{
 This function creates a markov model for the provided data set. It uses
@@ -23,11 +23,11 @@ if(expType == 1) %Tag each single record (No hierarchical model)
     dischargeIndices = [];
     rechargeIndices = [];
     usersIndex = 0; %Stores the index where a new user's records will start
-    for i=1:size(validDatasets, 1)
-        singleUserData = validDatasets{i, 2};
-        singleUserData = procCalcChargeRate(singleUserData, 1); %The user data is returned with an added column of "charge/discharge rate"
-        tempIndex = find(singleUserData(:, 7) == 0 & singleUserData(:, 9) >= 20/(10/granularity));
-        allUsersDataRecords = [allUsersDataRecords; singleUserData(2:end, :)]; %Remove the first data record in the data set since the discharge rate is 0 due to lack of existence of previous records
+    for i=1:size(validDatasetsForOneTimeGranularity, 1)
+        singleUserDataRecords = validDatasetsForOneTimeGranularity{i, 2};
+        singleUserDataRecords = procCalcChargeRate(singleUserDataRecords, 1); %The user data is returned with an added column of "charge/discharge rate"
+        tempIndex = find(singleUserDataRecords(:, 7) == 0 & singleUserDataRecords(:, 9) >= 20/(10/granularity));
+        allUsersDataRecords = [allUsersDataRecords; singleUserDataRecords(2:end, :)]; %Remove the first data record in the data set since the discharge rate is 0 due to lack of existence of previous records
         usersIndex = [usersIndex, length(allUsersDataRecords(:, 1))];
     end
     

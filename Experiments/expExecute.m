@@ -27,6 +27,13 @@ if(numOfDays <= 0)
     numOfDays = 1;
 end
 
+initChargeLvl = abs(initChargeLvl);
+if(initChargeLvl < 0)
+    initChargeLvl = 0;
+elseif(initChargeLvl > 100)
+    initChargeLvl = 100;
+end
+
 if(size(timeGranularity, 1) > 1)
    if(size(timeGranularity, 2) == 1)
       timeGranularity = timeGranularity';
@@ -50,7 +57,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 timeGranulatedDataRecord{1, 1} = procStart(Dataset, requestedTags, timeGranularity);
                 timeGranulatedDataRecord{1, 2} = timeGranularity;
                 validDataRecords = procDiscardNoisyDatasets(timeGranulatedDataRecord);
-                HMMmodel = genHMM(validDataRecords, timeGranularity, expType);
+                HMMmodel = genHMM(validDataRecords{1, 1}, timeGranularity, expType);
                 simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfDays);
             else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)

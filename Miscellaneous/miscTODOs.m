@@ -10,6 +10,10 @@ TODOs:
     - expType == 2: Learn model type 1, but the difference is the observation is
         a GMM instead of one Normal distribution
     - expType = 3: Learn a model for each user
+
+- expHMM.m:
+    - The initial state distribution is dependent on the initial charge
+    level
 ____________________
 
 - genHMM.m:

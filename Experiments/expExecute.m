@@ -1,4 +1,4 @@
-function expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays)
+function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays, plotSimResult)
 
 %% Function Description
 %{
@@ -16,9 +16,13 @@ experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 - initChargeLvl: The initial charge level from which the simulations start
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
+- plotSimReuslt: Takes on values 1 or 0. If 1, the simulation result will
+plot and otherwise for the value 0.
 
 Output:
-Plot the simulation result
+Plot() the simulation result
+- simulationResult: The simulation result after learning a model over the
+data and using it for simulation
 %}
 
 %% The program code
@@ -43,6 +47,17 @@ end
 if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranularity))
     timeGranularity = 0;
 end
+
+plotSimResult = plotSimResult(1, 1); %Cannot be a vector
+if(plotSimResult < 0)
+    plotSimResult = abs(plotSimResult);
+end
+if(plotSimResult >= 1)
+   plotSimResult = 1;
+else
+    plotSimResult = 0;
+end
+
 
 timeGranularity = sort(timeGranularity, 'ascend');
 
@@ -131,7 +146,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         end
     end
     
-    miscPlotSimulationResults(simulationResult, timeGranularity, 1); %Print the results obtained via any of the above section of the program
+    if(plotSimResult == 1)
+        miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, 1, 1, expType, numOfDays);
+    end
     
 end
 

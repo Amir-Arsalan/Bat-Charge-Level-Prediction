@@ -18,7 +18,7 @@ Output:
     - simulation: Simulation results given the model and initial charge lvl
 %}
 
-simulation = zeros(400, ceil((1440/timeGranularity) * numOfDays)); %400 Simulations, each 2-day long
+simulation = zeros(400, ceil((1440/timeGranularity) * numOfDays)); %400 Simulations
 simulation(:, 1) = initChargeLvl;
 
 transition = HMMmodel{1, 1};
@@ -26,8 +26,8 @@ emission = HMMmodel{1, 2};
 initial = HMMmodel{1, 3};
 
 for i=1:400 %Do it for 400 simulations
-    state = determineInitState(initChargeLvl);
-    for j=2:ceil((1440/timeGranularity) * 2)
+    state = initializeStartState(initChargeLvl);
+    for j=2:ceil((1440/timeGranularity) * numOfDays)
         emitParams = emission{1, state};
         emittedChargeRate = normrnd(emitParams(1), emitParams(2));
         if(simulation(i, j - 1) - emittedChargeRate <= 0)
@@ -45,7 +45,7 @@ end
 
 %% Functions
 
-    function state = determineInitState(initChargeLvl)
+    function state = initializeStartState(initChargeLvl)
         if(initChargeLvl ~= 100 && initChargeLvl ~= 0)
             state = 2; %Idle
         elseif(initChargeLvl == 100)

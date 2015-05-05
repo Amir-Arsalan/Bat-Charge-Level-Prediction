@@ -60,6 +60,10 @@ else
     plotSimResult = 0;
 end
 
+if(initChargeLvl > 100 || initChargeLvl < 0)
+   error('The initial charge level cannot be less than 0 or more than 100'); 
+end
+
 
 timeGranularity = sort(timeGranularity, 'ascend');
 
@@ -69,13 +73,17 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         if(exist('Complete 207 users data.mat', 'file'))
             load('Complete 207 users data.mat', 'Dataset', 'requestedTags', 'requestedPaths');
             if(size(timeGranularity, 2) == 1 && timeGranularity ~= 0)
+                HMMmodel = cell(1, 2);
+                simulationResult = cell(1, 2);
                 timeGranularity = abs(timeGranularity);
                 timeGranulatedDataRecord = cell(1, 2);
                 timeGranulatedDataRecord{1, 1} = procStart(Dataset, requestedTags, timeGranularity);
                 timeGranulatedDataRecord{1, 2} = timeGranularity;
                 validDataRecords = procDiscardNoisyDatasets(timeGranulatedDataRecord);
-                HMMmodel = genHMM(validDataRecords{1, 1}, timeGranularity, expType, example);
-                simulationResult = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfDays);
+                HMMmodel{1, 1} = genHMM(validDataRecords{1, 1}, timeGranularity, expType, initChargeLvl, exactMatch, numOfDays);
+                HMMmodel{1, 2} = timeGranularity;
+                simulationResult{1, 1} = expHMM(initChargeLvl, HMMmodel{1, 1}, timeGranularity, numOfDays);
+                simulationResult{1, 2} = timeGranularity;
             else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
                    timeGranularity = [3, 5, 10, 15, 20, 30];
@@ -98,7 +106,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             if(size(timeGranularity, 2) > 1)
                 timeGranulatedDataRecord = procDiscardNoisyDatasets(timeGranulatedDataRecord);
                 for i=1:size(timeGranularity, 2)
-                   HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{i, 1}, timeGranularity(i), expType);
+                   HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{i, 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);
@@ -111,7 +119,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         if(exist('time granulated Data.mat', 'file'))
            if(timeGranularity == 0)
                load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
-               timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
+               timeGranularity = [15, 20, 30]; %The pre-defined time-granularities
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDataRecord, timeGranularity);
                timeGranularityIndices = sortrows(timeGranularityIndices, 2); %Sort with respect to the time granularity colummn
                timeGranularity = timeGranularityIndices(:, 2);
@@ -119,7 +127,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
                 for i=1:length(timeGranularityIndices)
-                   HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType);
+                   HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                    HMMmodel{i, 2} = timeGranularity(i);
                    simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);

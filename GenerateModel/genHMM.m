@@ -54,7 +54,8 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     
     [labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
     
-    numOfStates = length(unique(labeledDataRecord(:, end)));
+    numOfStates = 12;
+    
     transitionMatrix = zeros(numOfStates, numOfStates);
     emission = cell(1, numOfStates);
     initialDist = zeros(1, numOfStates);

@@ -54,11 +54,12 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     
     [labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
     
-    transitionMatrix = zeros(12, 12);
-    emission = cell(1, 12);
-    initialDist = zeros(1, 12);
+    numOfStates = length(unique(labeledDataRecord(:, end)));
+    transitionMatrix = zeros(numOfStates, numOfStates);
+    emission = cell(1, numOfStates);
+    initialDist = zeros(1, numOfStates);
     
-    for i=1:12 %Since we are sure we have 12 states
+    for i=1:numOfStates %Since we are sure we have 12 states
        tempChargeRates = labeledDataRecord(labeledDataRecord(:, 10) == i, 9);
        emission{1, i} = [mean(tempChargeRates), std(tempChargeRates)];
     end

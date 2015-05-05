@@ -72,7 +72,7 @@ if(expType == 1)
     end
 end
 
-initialDist = initialDist + unifrnd(1, 3); %Smoothing
+initialDist = initialDist + randi([1, 3]); %Smoothing
 initialDist = initialDist / sum(initialDist); %Transform to probability density
 
 end

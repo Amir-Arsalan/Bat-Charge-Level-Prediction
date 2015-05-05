@@ -1,4 +1,4 @@
-function [means, stds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, initChargeLvl, exactMatch, expType, numOfDays)
+function [means, stds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, timeGraularity, initChargeLvl, exactMatch, expType, numOfDays)
 %{
 This function extracts users charge levels and takes their mean and
 standard deviations
@@ -7,6 +7,7 @@ Inputs:
 - timeGranulatedDataRecord: A cell of n by 2 where each element in the 
 first column contains a matrix of time granulated data record set and 
 each element of the second column contains an associated time granularity
+- timeGranularity: A single quantity or a vector of time granularities
 - initChargeLvl: The initial charge level from which the user battery 
 charge level sequence extraction begins
 - exactMatch: Takes on values of 1 or 0. If 1 the function select the 'start
@@ -22,6 +23,19 @@ Outputs:
 %}
 
 %% Function code starts her
+
+%Avoid doing the computation for all time granularities
+tempDataRecord = cell(length(timeGraularity), 2);
+for i=1:length(timeGraularity)
+    for j=1:size(timeGranulatedDataRecord, 1)
+        if(timeGranulatedDataRecord{j, 2} == timeGraularity(i))
+           tempDataRecord{i, 1} = timeGranulatedDataRecord{j, 1}; 
+           tempDataRecord{i, 2} = timeGranulatedDataRecord{j, 2};
+        end
+    end    
+end
+timeGranulatedDataRecord = tempDataRecord;
+clear tempDataRecord
 
 if(expType == 1)
     usersChargeLvlSequences = cell(size(timeGranulatedDataRecord, 1), 2);

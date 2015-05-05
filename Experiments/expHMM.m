@@ -45,7 +45,7 @@ for i=1:numOfSimulations %from 1 to # of simulations
     end
 end
 
-%% Functions
+%% Local functions
 
     function state = initializeStartState(initChargeLvl)
         if(initChargeLvl ~= 100 && initChargeLvl ~= 0)

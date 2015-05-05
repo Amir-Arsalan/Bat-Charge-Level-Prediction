@@ -35,8 +35,13 @@ for i=1:length(timeGranularity)
     end
 end
 
-if(1 && all(timeGranularityIndices(:) == 0))
-   timeGranularityIndices = []; 
+i = 1;
+while(i <= size(timeGranularityIndices))
+   if(~all(timeGranularityIndices(i, :)))
+       fprintf('The stored time granulated data record sets do not include a data record set with time granularity of %d-minute\n', timeGranularity(i));
+       timeGranularityIndices(i, :) = [];
+   end
+   i = i + 1;
 end
 
 end

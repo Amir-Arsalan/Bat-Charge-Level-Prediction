@@ -51,7 +51,7 @@ for i=1:size(timeGranulatedDataRecord, 1)
 end
 
 if(succinct == 0)
-    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, initChargeLvl, exactMatch, expType, numOfDays);
+    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
     for i=1:size(simulationResult, 1)
         figure; subplot(2, 2, 1)
         plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :))
@@ -73,7 +73,7 @@ if(succinct == 0)
         ylim([0 100])
     end
 elseif(succinct == 1)
-    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(tempDataRecord, initChargeLvl, exactMatch, expType, numOfDays);
+    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(tempDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
     intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
     means = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
     stds = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
@@ -82,9 +82,11 @@ elseif(succinct == 1)
         stds(i, :) = std(intervalConsistentSimulationResult{i, 1});
     end
 
-    figure; plot(1:size(means, 2), means);
+    figure; 
+%     plot(1:size(means, 2), means);
+    miscPlotWithDifLineStyles(means, originMeans);
     hold on
-    plot(1:size(means, 2), originMeans);
+%     plot(1:size(means, 2), originMeans);
     title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylabel('Charge Level');
@@ -100,9 +102,11 @@ elseif(succinct == 1)
     eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
     hold off
 
-    figure; plot(1:size(stds, 2), stds);
+    figure;
+    miscPlotWithDifLineStyles(stds, originStds);
+%     plot(1:size(stds, 2), stds);
     hold on
-    plot(1:size(stds, 2), originStds);
+%     plot(1:size(stds, 2), originStds);
     title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylabel('Charge Level');

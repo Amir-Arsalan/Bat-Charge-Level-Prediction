@@ -87,7 +87,7 @@ if(expType == 1) %First model (a simple HMM with 12 states)
        transitionMatrix(i, :) = transitionMatrix(i, :) / sum(transitionMatrix(i, :)); 
     end
     
-    initialDist = procCalcInitialDist(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays); %This line of code replaces the previous 'initialDist' with a new one which depends on the initial battery charge level for simulation
+    initialDist = procCalcInitialDistVector(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays); %This line of code replaces the previous 'initialDist' with a new one which depends on the initial battery charge level for simulation
     model{1, 1} = transitionMatrix;
     model{1, 2} = emission;
     model{1, 3} = initialDist;

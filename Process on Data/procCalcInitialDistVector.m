@@ -1,4 +1,4 @@
-function initialDist = procCalcInitialDist(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays)
+function initialDist = procCalcInitialDistVector(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays)
 %{
 This function calculates a vector of initial probability distribution given
  initial charge level is equal to initChargeLvl
@@ -26,13 +26,13 @@ charge level is equal to initChargeLvl
 
 numOfStates = length(unique(labeledDataRecord(:, end))); %Get the number of states
 initialDist = zeros(1, numOfStates);
-boundary = 0.35;
+boundary = 0.35; %Emprically chosen
 
 if(expType == 1)
     exactNumOfRequiredRecords = numOfDays * (1440/timeGranularity);
     if(exactMatch == 1)
         exactMatchIndices = (find(labeledDataRecord(:, 6) == initChargeLvl));
-        if(length(exactMatchIndices > 0))
+        if(~isempty(exactMatchIndices))
           startIndex = exactMatchIndices(1);
           initialDist(labeledDataRecord(startIndex, end)) = initialDist(labeledDataRecord(startIndex, end)) + 1;
           k = 2;

@@ -1,9 +1,16 @@
 %{
 TODOs:
 
-05/05/2015:
+05/06/2015:
 
 - Start writing the paper
+
+- expExecute.m:
+    - The number of simulations should be the same as number of instances
+    in the original data set with the same battery charge level
+    
+- procExtractUsersBatteryChargeLevelStats.m:
+    - Identify and remove noisy records
 
 - RunExps.m:
     - Write a new function named "runExps" that runs different experiments
@@ -17,10 +24,9 @@ TODOs:
 - miscPlotResults.m:
     - Plot histogram of meeting different charge levels in different
     intervals
-
-- expHMM.m:
-    - The number of simulations should be the same as number of instances
-    in the original data set with the same battery charge level
+    - Remove the code snippet to avoid unnecessary computations from
+    procExtractUsersBatteryChargeLevelStats.m and place it in miscPlotResults.m
+    
 ____________________
 
 - genHMM.m:

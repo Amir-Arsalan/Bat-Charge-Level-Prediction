@@ -1,4 +1,4 @@
-function [means, stds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, timeGraularity, initChargeLvl, exactMatch, expType, numOfDays)
+function [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataRecordBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays)
 %{
 This function extracts users charge levels and takes their mean and
 standard deviations
@@ -18,17 +18,19 @@ the 'start charge levels' with a boundary of initChargeLvl.
 number of days for which the simulation will run
 
 Outputs:
-- means: Mean of extracted battery charge levels.
-- stds: Standard deviations of extracted batery charge levels
+- rawDataRecMean: Mean of extracted battery charge levels.
+- rawDataRecStd: Standard deviations of extracted batery charge levels
+- interpolatedBatSeqs: Interpolated charge levels given the smallest time
+granularity
 %}
 
 %% Function code starts her
 
 %Avoid doing the computation for all time granularities
-tempDataRecord = cell(length(timeGraularity), 2);
-for i=1:length(timeGraularity)
+tempDataRecord = cell(length(timeGranularity), 2);
+for i=1:length(timeGranularity)
     for j=1:size(timeGranulatedDataRecord, 1)
-        if(timeGranulatedDataRecord{j, 2} == timeGraularity(i))
+        if(timeGranulatedDataRecord{j, 2} == timeGranularity(i))
            tempDataRecord{i, 1} = timeGranulatedDataRecord{j, 1}; 
            tempDataRecord{i, 2} = timeGranulatedDataRecord{j, 2};
         end
@@ -100,14 +102,14 @@ timeGranularity = [];
 for i=1:size(usersChargeLvlSequences, 1)
     timeGranularity = [timeGranularity; usersChargeLvlSequences{i, 2}];
 end
-interpolatedBatChargeLvlSequences = procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
+interpolatedBatSeqs = procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
 
-means = zeros(size(interpolatedBatChargeLvlSequences, 1), size(interpolatedBatChargeLvlSequences{1, 1}, 2));
-stds = zeros(size(interpolatedBatChargeLvlSequences, 1), size(interpolatedBatChargeLvlSequences{1, 1}, 2));
+rawDataRecMean = zeros(size(interpolatedBatSeqs, 1), size(interpolatedBatSeqs{1, 1}, 2));
+rawDataRecStd = zeros(size(interpolatedBatSeqs, 1), size(interpolatedBatSeqs{1, 1}, 2));
 
-for i=1:size(interpolatedBatChargeLvlSequences)
-   means(i, :) = mean(interpolatedBatChargeLvlSequences{i, 1});
-   stds(i, :) = std(interpolatedBatChargeLvlSequences{i, 1});
+for i=1:size(interpolatedBatSeqs)
+   rawDataRecMean(i, :) = mean(interpolatedBatSeqs{i, 1});
+   rawDataRecStd(i, :) = std(interpolatedBatSeqs{i, 1});
 end
 
 end

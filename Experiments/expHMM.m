@@ -1,4 +1,4 @@
-function simulation = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfDays)
+function simulation = expHMM(initChargeLvl, HMMmodel, timeGranularity, numOfSimulation, numOfDays)
 
 %{
 This function runs a markov chains over the input model to simulate
@@ -11,6 +11,7 @@ Inputs:
         initial distribution vector
         a cell containing gaussian distribution parameters for emitting discharge/recharge rate)
     - timeGranularity: The time granularity of simulations
+    - numOfSimulation: The number of simulations to take place
     - numOfDays: A posotive, preferably integer, quantity that specifies 
     the number of days for which the simulation will run
 
@@ -18,15 +19,15 @@ Output:
     - simulation: Simulation results given the model and initial charge lvl
 %}
 
-numOfSimulations = 800;
-simulation = zeros(numOfSimulations, ceil((1440/timeGranularity) * numOfDays));
+numOfSimulation = numOfSimulation;
+simulation = zeros(numOfSimulation, ceil((1440/timeGranularity) * numOfDays));
 simulation(:, 1) = initChargeLvl;
 
 transition = HMMmodel{1, 1};
 emission = HMMmodel{1, 2};
 initialDist = HMMmodel{1, 3};
 
-for i=1:numOfSimulations %from 1 to # of simulations
+for i=1:numOfSimulation %from 1 to # of simulations
 %     state = initializeStartState(initChargeLvl);
     state = numberLine_rouletteWheel(initialDist);
     for j=2:ceil((1440/timeGranularity) * numOfDays)

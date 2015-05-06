@@ -1,9 +1,9 @@
-function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, succinct, exactMatch, expType, numOfDays)
+function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd)
 
 %{
 Plots the simulation results
 
-Input: 
+Input:
 - simulationResult: It is either a cell of n x 2 where n is the number of
 simulations, each element of the first column contains a matrix of m by t 
 where m is the number of simulations and t is the number of intervals that
@@ -23,6 +23,10 @@ the 'start charge levels' with a boundary of initChargeLvl.
 - expType: The experiment type
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
+- rawDataRecMean: Mean of extracted battery charge levels.
+- rawDataRecStd: Standard deviations of extracted batery charge levels
+- interpolatedBatSeqs: Interpolated charge levels given the smallest time
+granularity
 
 
 Note: The simulation could be a cell of h x 2 cell where h corresponds to
@@ -51,7 +55,6 @@ for i=1:size(timeGranulatedDataRecord, 1)
 end
 
 if(succinct == 0)
-    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
     for i=1:size(simulationResult, 1)
         figure; subplot(2, 2, 1)
         plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :))
@@ -73,7 +76,6 @@ if(succinct == 0)
         ylim([0 100])
     end
 elseif(succinct == 1)
-    [originMeans, originStds] = procExtractUsersBatteryChargeLevelStats(tempDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
     intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
     means = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
     stds = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
@@ -84,7 +86,7 @@ elseif(succinct == 1)
 
     figure; 
 %     plot(1:size(means, 2), means);
-    miscPlotWithDifLineStyles(means, originMeans);
+    miscPlotWithDifLineStyles(means, rawDataRecMean);
     hold on
 %     plot(1:size(means, 2), originMeans);
     title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
@@ -96,14 +98,14 @@ elseif(succinct == 1)
     for i=2:length(timeGranularity)
     temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Mean (' ,num2str(timeGranularity(i))))), ')''');
     end
-    for i=1:size(originMeans, 1)
+    for i=1:size(rawDataRecMean, 1)
         temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Mean (' ,num2str(timeGranularity(i))))), ')''');
     end
     eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
     hold off
 
     figure;
-    miscPlotWithDifLineStyles(stds, originStds);
+    miscPlotWithDifLineStyles(stds, rawDataRecStd);
 %     plot(1:size(stds, 2), stds);
     hold on
 %     plot(1:size(stds, 2), originStds);
@@ -116,7 +118,7 @@ elseif(succinct == 1)
     for i=2:length(timeGranularity)
     temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Std (' ,num2str(timeGranularity(i))))), ')''');
     end
-    for i=1:size(originMeans, 1)
+    for i=1:size(rawDataRecMean, 1)
         temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Std (' ,num2str(timeGranularity(i))))), ')''');
     end
     eval(['legend(', temp, ', ''Location'', ''Southeast'');']);

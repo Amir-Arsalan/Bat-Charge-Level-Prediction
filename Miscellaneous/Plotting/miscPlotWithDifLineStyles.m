@@ -18,19 +18,19 @@ Output:
 
 %% Function code starts here
 
-lineStyles = {'-', '--', '-.', '+', '*', 'x', '^', 'o^', 'd', 'v', ':', 'd^'};
+lineStyles = {'-', '--', '-.', '-.o', '--o', 'x', 'd^', 'o^', 'd', 'v', ':', '+'};
 
 
-plot(1:size(simulationStats, 2), simulationStats(1, :), lineStyles{1});
+plot(1:size(simulationStats, 2), simulationStats(1, :), lineStyles{1}, 'MarkerSize', 3);
 hold on
 for i=2:size(simulationStats, 1)
-   plot(1:size(simulationStats, 2), simulationStats(i, :), lineStyles{i});
+   plot(1:size(simulationStats, 2), simulationStats(i, :), lineStyles{i}, 'MarkerSize', 3);
 end
 
-plot(1:size(originalStats, 2), originalStats(1, :), lineStyles{i + 1});
+plot(1:size(originalStats, 2), originalStats(1, :), lineStyles{i + 1}, 'MarkerSize', 3);
 tempIndex = i + 1;
 for i=2:size(originalStats, 1)
-   plot(1:size(originalStats, 2), originalStats(i, :), lineStyles{tempIndex + i - 2});
+   plot(1:size(originalStats, 2), originalStats(i, :), lineStyles{tempIndex + i - 1}, 'MarkerSize', 3);
 end
 hold off
 

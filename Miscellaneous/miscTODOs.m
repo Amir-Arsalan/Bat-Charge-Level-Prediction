@@ -22,6 +22,7 @@ TODOs:
     - expType = 3: Learn a model for each user
 
 - miscPlotResults.m:
+    - Have different plot types to plot different plots!
     - Plot histogram of meeting different charge levels in different
     intervals
     - Remove the code snippet to avoid unnecessary computations from

@@ -1,4 +1,4 @@
-function [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataRecordBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays)
+function [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays)
 %{
 This function extracts users charge levels and takes their mean and
 standard deviations

@@ -14,13 +14,7 @@ granularity associated with the simulation.
 first column contains a matrix of time granulated data record set and 
 each element of the second column contains an associated time granularity
 - timeGranularity: A single quantity or a vector of time granularities
-- initChargeLvl: The initial charge level from which the user battery 
-charge level sequence extraction begins
 - succinct: Takes on the values 0 or 1. Determines whether the plots should be succinct or not
-- exactMatch: Takes on values of 1 or 0. If 1 the function select the 'start
-charge levels' equal to initChargeLvl exactly. If not, the function selects
-the 'start charge levels' with a boundary of initChargeLvl.
-- expType: The experiment type
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
 - rawDataRecMean: Mean of extracted battery charge levels.
@@ -85,43 +79,40 @@ elseif(succinct == 1)
     end
 
     figure; 
-%     plot(1:size(means, 2), means);
     miscPlotWithDifLineStyles(means, rawDataRecMean);
     hold on
-%     plot(1:size(means, 2), originMeans);
     title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylabel('Charge Level');
     ylim([0 100])
 
-    temp = strcat(horzcat('''Prediction Mean (', num2str(timeGranularity(1))), ')''');
+    theLegendText = strcat(horzcat('''Prediction Mean (', num2str(timeGranularity(1))), ')''');
     for i=2:length(timeGranularity)
-    temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Mean (' ,num2str(timeGranularity(i))))), ')''');
+    theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction Mean (' ,num2str(timeGranularity(i))))), ')''');
     end
     for i=1:size(rawDataRecMean, 1)
-        temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Mean (' ,num2str(timeGranularity(i))))), ')''');
+        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data Mean (' ,num2str(timeGranularity(i))))), ')''');
     end
-    eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
+    eval(['legend(', theLegendText, ', ''Location'', ''Southeast'');']);
     hold off
 
     figure;
     miscPlotWithDifLineStyles(stds, rawDataRecStd);
-%     plot(1:size(stds, 2), stds);
     hold on
-%     plot(1:size(stds, 2), originStds);
+
     title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylabel('Charge Level');
     ylim([0 45])
 
-    temp = strcat(horzcat('''Prediction Std (', num2str(timeGranularity(1))), ')''');
+    theLegendText = strcat(horzcat('''Prediction Std (', num2str(timeGranularity(1))), ')''');
     for i=2:length(timeGranularity)
-    temp = strcat(strcat(temp, strcat(', ''', horzcat('Prediction Std (' ,num2str(timeGranularity(i))))), ')''');
+    theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction Std (' ,num2str(timeGranularity(i))))), ')''');
     end
     for i=1:size(rawDataRecMean, 1)
-        temp = strcat(strcat(temp, strcat(', ''', horzcat('Raw Data Std (' ,num2str(timeGranularity(i))))), ')''');
+        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data Std (' ,num2str(timeGranularity(i))))), ')''');
     end
-    eval(['legend(', temp, ', ''Location'', ''Southeast'');']);
+    eval(['legend(', theLegendText, ', ''Location'', ''Southeast'');']);
     hold off
 else
     error('Succinct cannot take any value differnet than 0 or 1');

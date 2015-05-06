@@ -1,4 +1,4 @@
-function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays, plotSimResult)
+function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays, plotType)
 
 %% Function Description
 %{
@@ -16,8 +16,9 @@ experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 - initChargeLvl: The initial charge level from which the simulations start
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
-- plotSimReuslt: Takes on values 1 or 0. If 1, the simulation result will
-plot and otherwise for the value 0.
+- plotType: It is a single quantity or a vector to determine the type of 
+plots that the user requests after the program has ended execution. If
+empty, the program will not plot the results.
 
 Output:
 Plot() the simulation result
@@ -50,14 +51,14 @@ if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranulari
     timeGranularity = 0;
 end
 
-plotSimResult = plotSimResult(1, 1); %Cannot be a vector
-if(plotSimResult < 0)
-    plotSimResult = abs(plotSimResult);
+plotType = plotType(1, 1); %Cannot be a vector
+if(plotType < 0)
+    plotType = abs(plotType);
 end
-if(plotSimResult >= 1)
-   plotSimResult = 1;
+if(plotType >= 1)
+   plotType = 1;
 else
-    plotSimResult = 0;
+    plotType = 0;
 end
 
 if(initChargeLvl > 100 || initChargeLvl < 0)
@@ -141,7 +142,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    timeGranularityIndices = timeGranularityIndices(:, 1);
                    HMMmodel = cell(length(timeGranularity), 2);
                    simulationResult = cell(length(timeGranularity), 2);
-                   [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataRecordBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
+                   [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
                    for i=1:length(timeGranularityIndices)
                        numOfSimulation = size(interpolatedBatSeqs{i, 1}, 1);
                        HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
@@ -158,10 +159,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         end
     end
     
-    if(plotSimResult == 1)
-        miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, initChargeLvl, succinct, exactMatch, expType, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedBatSeqs);
-    end
-    
+    miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd);    
 end
 
 end

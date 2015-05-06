@@ -3,6 +3,8 @@ TODOs:
 
 05/05/2015:
 
+- Start writing the paper
+
 - RunExps.m:
     - Write a new function named "runExps" that runs different experiments
     by differnet parameters and evaluates the results (error and ... )
@@ -13,7 +15,8 @@ TODOs:
     - expType = 3: Learn a model for each user
 
 - miscPlotResults.m:
-    - Plot the results with different automatically chosen line styles
+    - Plot histogram of meeting different charge levels in different
+    intervals
 
 - expHMM.m:
     - The number of simulations should be the same as number of instances
@@ -37,10 +40,11 @@ ____________________
     - (Done) Plot means of battery charge levels of users against mean of each
     simulation for each time granularity along with the respective legend
 
-- miscPlotWithSameTimeGranularity.m
+- procGenerateIntervalConsistentDataRecord.m
     - (Done) Interpolate simulation results of all time granularities within
     the smallest time granularity to ease plotting their means and standard
     deviations in one elaborative graph
+    - (Done)Plot the results with different, automatically chosen line styles
 
 - expHMM.m:
     - (Done) The initial state distribution is dependent on the initial charge

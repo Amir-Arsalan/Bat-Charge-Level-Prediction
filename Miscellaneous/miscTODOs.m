@@ -12,14 +12,20 @@ TODOs:
 - procExtractUsersBatteryChargeLevelStats.m:
     - Identify and remove noisy records
 
+- expHMM.m:
+    - Learn the initial distribution parameters given the state the user
+    has been in
+
 - RunExps.m:
     - Write a new function named "runExps" that runs different experiments
     by differnet parameters and evaluates the results (error and ... )
 
 - genHMM.m:
-    - expType == 2: Learn model type 1, but the difference is the observation is
+    - expType == 2: Learn model type 1, but the initial distribution vector
+    parameters are learned conditioned on the discharge/recharge state as input 
+    - expType == 3: Learn model type 1, but the difference is the observation is
         a GMM instead of one Normal distribution
-    - expType = 3: Learn a model for each user
+    - expType = 4: Learn a model for each user
 
 - miscPlotResults.m:
     - Have different plot types to plot different plots!
@@ -31,15 +37,15 @@ TODOs:
 ____________________
 
 - genHMM.m:
-    - expType == 2: Learn model type 1, but the difference is the observation is
-    a GMM instead of one Normal distribution
-    - expType = 3: Learn a model for each user
-    - expType = 4: Learn a model for each user dependent on battery charge level
-    - expType = 4: Learn model type 4, with GMM observations
-    - expType = 5: Learn a model dependent on time of day
-    - expType = 6: expType 5 + dependency on battery charge lvl
-    - expType = 7: expType 5 with GMM observations
-    - expType = 8: expType 6 with GMM observations
+    - expType == 3: Learn model type 1, but the difference is the observation is
+        a GMM instead of one Normal distribution
+    - expType = 4: Learn a model for each user
+    - expType = 5: Learn a model for each user dependent on battery charge level
+    - expType = 6: Learn model type 4, with GMM observations
+    - expType = 7: Learn a model dependent on time of day
+    - expType = 8: expType 5 + dependency on battery charge lvl
+    - expType = 9: expType 5 with GMM observations
+    - expType = 10: expType 6 with GMM observations
 
 - miscPlotResults.m:
     - (Done) Plot time consistent simulation result

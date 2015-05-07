@@ -26,7 +26,8 @@ Plot() the simulation result
 data and using it for simulation
 %}
 
-%% The program code
+%% The function code starts here
+
 exactMatch = 0;
 succinct = 1;
 
@@ -49,16 +50,6 @@ if(size(timeGranularity, 1) > 1)
 end
 if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranularity))
     timeGranularity = 0;
-end
-
-plotType = plotType(1, 1); %Cannot be a vector
-if(plotType < 0)
-    plotType = abs(plotType);
-end
-if(plotType >= 1)
-   plotType = 1;
-else
-    plotType = 0;
 end
 
 if(initChargeLvl > 100 || initChargeLvl < 0)
@@ -142,9 +133,9 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    timeGranularityIndices = timeGranularityIndices(:, 1);
                    HMMmodel = cell(length(timeGranularity), 2);
                    simulationResult = cell(length(timeGranularity), 2);
-                   [rawDataRecMean, rawDataRecStd, interpolatedBatSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
+                   [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
                    for i=1:length(timeGranularityIndices)
-                       numOfSimulation = size(interpolatedBatSeqs{i, 1}, 1);
+                       numOfSimulation = size(interpolatedOriginalSeqs{i, 1}, 1);
                        HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                        HMMmodel{i, 2} = timeGranularity(i);
                        simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfSimulation, numOfDays);
@@ -159,7 +150,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         end
     end
     
-    miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd);    
+    miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
 end
 
 end

@@ -1,4 +1,4 @@
-function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd)
+function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs)
 
 %{
 Plots the simulation results
@@ -19,7 +19,7 @@ each element of the second column contains an associated time granularity
 number of days for which the simulation will run
 - rawDataRecMean: Mean of extracted battery charge levels.
 - rawDataRecStd: Standard deviations of extracted batery charge levels
-- interpolatedBatSeqs: Interpolated charge levels given the smallest time
+- interpolatedOriginalSeqs: Interpolated charge levels given the smallest time
 granularity
 
 
@@ -51,7 +51,8 @@ end
 if(succinct == 0)
     for i=1:size(simulationResult, 1)
         figure; subplot(2, 2, 1)
-        plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :))
+        miscPlotWithDifLineStyles(simulationResult{i, 1}, [], 5);
+%         plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :), lineStyle{i}, 'MarkerSize', 3)
         title(sprintf('Five simulations shown for %d-minute time granularity', timeGranularity(i)))
         xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(i)));
         ylabel('Charge Level');
@@ -65,6 +66,27 @@ if(succinct == 0)
         subplot(2, 2, [3, 4])
         plot(mean(simulationResult{i, 1}))
         title(sprintf('Mean of simulations for %d-minute time granularity', timeGranularity(i)))
+        xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(i)));
+        ylabel('Charge Level');
+        ylim([0 100])
+    end
+    for i=1:size(interpolatedOriginalSeqs, 1)
+        figure; subplot(2, 2, 1)
+        miscPlotWithDifLineStyles([], interpolatedOriginalSeqs{i, 1}, 5);
+%         plot(1:size(simulationResult{i, 1}(1, :), 2), simulationResult{i, 1}(1:5, :), lineStyle{i}, 'MarkerSize', 3)
+        title(sprintf('Five raw data sequences shown for %d-minute time granularity', timeGranularity(i)))
+        xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(i)));
+        ylabel('Charge Level');
+        ylim([0 100])
+        subplot(2, 2, 2)
+        plot(std(interpolatedOriginalSeqs{i, 1}))
+        ylim([0, 45])
+        title(sprintf('Standard Deviation of raw data sequences for %d-minute time granularity', timeGranularity(i)))
+        xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(i)));
+        ylabel('Charge Level');
+        subplot(2, 2, [3, 4])
+        plot(mean(interpolatedOriginalSeqs{i, 1}))
+        title(sprintf('Mean of raw data sequences for %d-minute time granularity', timeGranularity(i)))
         xlabel(sprintf('Time intervals (each interval represents %d minutes)', timeGranularity(i)));
         ylabel('Charge Level');
         ylim([0 100])

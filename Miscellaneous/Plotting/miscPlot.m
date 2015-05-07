@@ -1,4 +1,4 @@
-function miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd)
+function miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs)
 %{
 Plot the appropriate type of plots
 
@@ -39,6 +39,7 @@ initial charge level
 %}
 
 %% The function code starts here
+
 if(~isempty(plotType))
     
     if(size(plotType, 1) > 1)
@@ -52,8 +53,8 @@ if(~isempty(plotType))
     for i=1:length(plotType)
         if(plotType(i) == 1)
             miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd);
-        elseif(plotType(2))
-            
+        elseif(plotType(i) == 2)
+            miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, 0 , numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
         end
     end
 end

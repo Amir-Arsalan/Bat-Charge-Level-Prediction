@@ -29,7 +29,7 @@ initialDist = zeros(1, numOfStates);
 boundary = 0.35; %Emprically chosen
 
 if(expType == 1)
-    exactNumOfRequiredRecords = numOfDays * (1440/timeGranularity);
+    exactNumberOfRequestedIntervals = numOfDays * (1440/timeGranularity);
     if(exactMatch == 1)
         exactMatchIndices = (find(labeledDataRecord(:, 6) == initChargeLvl));
         if(~isempty(exactMatchIndices))
@@ -37,11 +37,11 @@ if(expType == 1)
           initialDist(labeledDataRecord(startIndex, end)) = initialDist(labeledDataRecord(startIndex, end)) + 1;
           k = 2;
            while(k <= length(exactMatchIndices))
-              if(exactMatchIndices(k) < startIndex + exactNumOfRequiredRecords - 1 && startIndex + exactNumOfRequiredRecords - 1 <= size(labeledDataRecord, 1))
+              if(exactMatchIndices(k) < startIndex + exactNumberOfRequestedIntervals - 1 && startIndex + exactNumberOfRequestedIntervals - 1 <= size(labeledDataRecord, 1))
                   exactMatchIndices(k) = [];
                   k = k - 1;
-              elseif(exactMatchIndices(k) > startIndex + exactNumOfRequiredRecords - 1)
-                  if(startIndex + exactNumOfRequiredRecords - 1 <= size(labeledDataRecord, 1))
+              elseif(exactMatchIndices(k) > startIndex + exactNumberOfRequestedIntervals - 1)
+                  if(startIndex + exactNumberOfRequestedIntervals - 1 <= size(labeledDataRecord, 1))
                       initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), startIndex + 1), end)) = initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), startIndex + 1), end)) + 1;
                       startIndex = exactMatchIndices(k);
                   else
@@ -57,11 +57,11 @@ if(expType == 1)
         end
     elseif(exactMatch == 0) %If not looking for exact matches
            k = 1;
-           while(k <= size(labeledDataRecord, 1) - exactNumOfRequiredRecords)
+           while(k <= size(labeledDataRecord, 1) - exactNumberOfRequestedIntervals)
                if(labeledDataRecord(k, 6) - boundary*(timeGranularity/10) < initChargeLvl && labeledDataRecord(k, 6) + boundary*(timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
-                   if(miscCheckIndexExceeding(k, exactNumOfRequiredRecords, 0, labeledDataRecord))
+                   if(miscCheckIndexExceeding(k, exactNumberOfRequestedIntervals, 0, labeledDataRecord))
                       initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), k + 1), end)) = initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), k + 1), end)) + 1;
-                      k = k + exactNumOfRequiredRecords;
+                      k = k + exactNumberOfRequestedIntervals;
                    else
                        break;
                    end

@@ -24,7 +24,7 @@ charge level is equal to initChargeLvl
 
 %% Function code stars here
 
-numOfStates = length(unique(labeledDataRecord(:, end))); %Get the number of states
+numOfStates = max(12, length(unique(labeledDataRecord(:, end)))); %Get the number of states
 initialDist = zeros(1, numOfStates);
 boundary = 0.35; %Emprically chosen
 

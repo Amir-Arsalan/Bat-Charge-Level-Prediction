@@ -1,4 +1,4 @@
-function miscPlotSimulationResults(simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs)
+function miscPlotSimulationResults(simulationResult, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs)
 
 %{
 Plots the simulation results
@@ -33,19 +33,6 @@ column stores the time-granularity associated with the simulation result
 
 if(size(timeGranularity, 2) > 1)
     timeGranularity = timeGranularity';
-end
-
-tempDataRecord = cell(size(simulationResult, 1), 2);
-tempTimeGranularityIndex = 1;
-for i=1:size(timeGranulatedDataRecord, 1)
-   if(timeGranulatedDataRecord{i, 2} == timeGranularity(tempTimeGranularityIndex))
-      tempDataRecord{tempTimeGranularityIndex, 1} = timeGranulatedDataRecord{i, 1};
-      tempDataRecord{tempTimeGranularityIndex, 2} = timeGranulatedDataRecord{i, 2};
-      tempTimeGranularityIndex = tempTimeGranularityIndex + 1;
-   end
-   if(tempTimeGranularityIndex > length(timeGranularity))
-       break;
-   end
 end
 
 if(succinct == 0)
@@ -101,7 +88,7 @@ elseif(succinct == 1)
     end
 
     figure; 
-    miscPlotWithDifLineStyles(means, rawDataRecMean);
+    miscPlotWithDifLineStyles(means, rawDataRecMean, 14);
     hold on
     title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
@@ -119,7 +106,7 @@ elseif(succinct == 1)
     hold off
 
     figure;
-    miscPlotWithDifLineStyles(stds, rawDataRecStd);
+    miscPlotWithDifLineStyles(stds, rawDataRecStd, 14);
     hold on
 
     title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))

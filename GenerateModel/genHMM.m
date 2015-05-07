@@ -52,6 +52,9 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
     %}
     
+    if(timeGranularity == 30)
+        
+    end
     [labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
     
     numOfStates = 12;
@@ -84,6 +87,15 @@ if(expType == 1) %First model (a simple HMM with 12 states)
     initialDist = initialDist / sum(initialDist);
     
     for i=1:size(transitionMatrix, 1)
+        %START Prevent NaN probability distribution vectors, if any
+        if(sum(transitionMatrix(i, :)) == 0)
+           transitionMatrix(i, i) = randi([10 + size(transitionMatrix, 1), 16 + size(transitionMatrix, 1)]);
+           tempIndices = 1:size(transitionMatrix, 1);
+           tempIndices = [tempIndices(1: i - 1), tempIndices(i + 1:end)];
+           transitionMatrix(i, tempIndices) = randi([1, 3], length(tempIndices), 1);
+           clear tempIndices
+        end
+        %END Prevent NaN probability distribution vectors, if any
        transitionMatrix(i, :) = transitionMatrix(i, :) / sum(transitionMatrix(i, :)); 
     end
     

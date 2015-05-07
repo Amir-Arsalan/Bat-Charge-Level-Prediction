@@ -29,7 +29,7 @@ Output:
 
 %% Function code starts here
 
-lineStyle = {'-', '--', '-.', '-.o', '--o', '-:', 'x', '^', 'v-', 'o^', 'd', 'v', ':', '+'};
+lineStyle = {'-', '--', '-.', '-.o', '--o', ':', 'x', '^', 'v', '-.+', 'd', '-v', ':', '+'};
 
 if(isempty(simulationResult) && isempty(originalResult))
    error('There is no simulation or original battery charge level sequence to plot'); 
@@ -56,7 +56,7 @@ if(~isempty(originalResult))
     for i=2:min(numberOfInstancesToPlot, size(originalResult, 1))
        plot(1:size(originalResult, 2), originalResult(i, :), lineStyle{tempIndex + i - 1}, 'MarkerSize', 3);
     end
-    hold off  
+    hold off
 end
 
 

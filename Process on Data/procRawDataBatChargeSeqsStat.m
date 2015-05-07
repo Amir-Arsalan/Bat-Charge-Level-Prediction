@@ -97,12 +97,11 @@ if(expType == 1)
     end
 end
 
-% Apply linear interpolation
 timeGranularity = [];
 for i=1:size(usersChargeLvlSequences, 1)
     timeGranularity = [timeGranularity; usersChargeLvlSequences{i, 2}];
 end
-interpolatedBatSeqs = procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays);
+interpolatedBatSeqs = procGenerateIntervalConsistentDataRecord(usersChargeLvlSequences, timeGranularity, numOfDays); % Apply linear interpolation
 
 rawDataRecMean = zeros(size(interpolatedBatSeqs, 1), size(interpolatedBatSeqs{1, 1}, 2));
 rawDataRecStd = zeros(size(interpolatedBatSeqs, 1), size(interpolatedBatSeqs{1, 1}, 2));

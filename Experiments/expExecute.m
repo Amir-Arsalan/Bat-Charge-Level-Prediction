@@ -1,6 +1,5 @@
 function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays, plotType)
 
-%% Function Description
 %{
 This function is used to run different experiments. It is assumed that the
 data set has been stored in "Complete 207 users data.mat" file.
@@ -42,14 +41,15 @@ elseif(initChargeLvl > 100)
     initChargeLvl = 100;
 end
 
+if(~exist('timeGranularity', 'var') || size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranularity))
+    timeGranularity = 0;
+end
+
 if(size(timeGranularity, 1) > 1)
    if(size(timeGranularity, 2) == 1)
       timeGranularity = timeGranularity';
        timeGranularity = timeGranularity(1, :); %Take the first row only
    end
-end
-if(size(timeGranularity, 2) == 1 && timeGranularity < 0 || isempty(timeGranularity))
-    timeGranularity = 0;
 end
 
 if(initChargeLvl > 100 || initChargeLvl < 0)
@@ -71,10 +71,12 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                 timeGranulatedDataRecord = cell(1, 2);
                 timeGranulatedDataRecord{1, 1} = procStart(Dataset, requestedTags, timeGranularity);
                 timeGranulatedDataRecord{1, 2} = timeGranularity;
-                validDataRecords = procDiscardNoisyDatasets(timeGranulatedDataRecord);
-                HMMmodel{1, 1} = genHMM(validDataRecords{1, 1}, timeGranularity, expType, initChargeLvl, exactMatch, numOfDays);
+                timeGranulatedDataRecord = procDiscardNoisyDatasets(timeGranulatedDataRecord);
+                [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
+                numOfSimulation = size(interpolatedOriginalSeqs{1, 1}, 1);
+                HMMmodel{1, 1} = genHMM(timeGranulatedDataRecord{1, 1}, timeGranularity, expType, initChargeLvl, exactMatch, numOfDays);
                 HMMmodel{1, 2} = timeGranularity;
-                simulationResult{1, 1} = expHMM(initChargeLvl, HMMmodel{1, 1}, timeGranularity, numOfDays);
+                simulationResult{1, 1} = expHMM(initChargeLvl, HMMmodel{1, 1}, timeGranularity, numOfSimulation, numOfDays);
                 simulationResult{1, 2} = timeGranularity;
             else %If the timeGranularity is a vector
                 if(size(timeGranularity, 2) == 1 && timeGranularity == 0)
@@ -97,10 +99,12 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
             
             if(size(timeGranularity, 2) > 1)
                 timeGranulatedDataRecord = procDiscardNoisyDatasets(timeGranulatedDataRecord);
+                [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
                 for i=1:size(timeGranularity, 2)
+                   numOfSimulation = size(interpolatedOriginalSeqs{i, 1}, 1);
                    HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{i, 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                    HMMmodel{i, 2} = timeGranularity(i);
-                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
+                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfSimulation, numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);
                 end
             end
@@ -118,10 +122,12 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                timeGranularityIndices = timeGranularityIndices(:, 1);
                HMMmodel = cell(length(timeGranularity), 2);
                simulationResult = cell(length(timeGranularity), 2);
+               [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
                 for i=1:length(timeGranularityIndices)
+                   numOfSimulation = size(interpolatedOriginalSeqs{i, 1}, 1);
                    HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
                    HMMmodel{i, 2} = timeGranularity(i);
-                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfDays);
+                   simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfSimulation, numOfDays);
                    simulationResult{i, 2} = timeGranularity(i);
                end
            else %If the user has input a timeGranularity (or a vector of timeGranularity) and the user wants to use the pre-labeled data record sets that are already stored
@@ -150,7 +156,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         end
     end
     
-    miscPlot(plotType, simulationResult, timeGranulatedDataRecord, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
+    miscPlot(plotType, simulationResult, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
 end
 
 end

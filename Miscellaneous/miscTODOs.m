@@ -1,20 +1,17 @@
+%%
 %{
 TODOs:
 
-05/06/2015:
+05/07/2015:
 
 - Start writing the paper
 
-- expExecute.m:
-    - The number of simulations should be the same as number of instances
-    in the original data set with the same battery charge level
-    
-- procExtractUsersBatteryChargeLevelStats.m:
+- procRawDataBatChargeSeqsStat.m:
     - Identify and remove noisy records
 
 - expHMM.m:
-    - Learn the initial distribution parameters given the state the user
-    has been in
+    - Estimate the initial distribution parameters given the charging state 
+    the user has been in
 
 - RunExps.m:
     - Write a new function named "runExps" that runs different experiments
@@ -28,11 +25,7 @@ TODOs:
     - expType = 4: Learn a model for each user
 
 - miscPlotResults.m:
-    - Have different plot types to plot different plots!
-    - Plot histogram of meeting different charge levels in different
-    intervals
-    - Remove the code snippet to avoid unnecessary computations from
-    procExtractUsersBatteryChargeLevelStats.m and place it in miscPlotResults.m
+    - Plot histogram of for different charge levels in different time intervals
     
 ____________________
 
@@ -52,6 +45,9 @@ ____________________
     - (Done) Plot the mean and variance in one plot
     - (Done) Plot means of battery charge levels of users against mean of each
     simulation for each time granularity along with the respective legend
+    - (Done) Define plotType which help plotting with different formats
+    - (Done) Remove the code snippet to avoid unnecessary computations from
+    procRawDataBatChargeSeqsStat.m and place it in miscPlotResults.m
 
 - procGenerateIntervalConsistentDataRecord.m
     - (Done) Interpolate simulation results of all time granularities within
@@ -62,6 +58,8 @@ ____________________
 - expHMM.m:
     - (Done) The initial state distribution is dependent on the initial charge
     level
+    - (Done) The number of simulations should be the same as number of instances
+    in the original data set with the same battery charge level
 
 - Missing value problem:
     - Fill the missing values with learned model

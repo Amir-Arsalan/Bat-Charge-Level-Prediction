@@ -79,12 +79,12 @@ if(succinct == 0)
         ylim([0 100])
     end
 elseif(succinct == 1)
-    intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
-    means = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
-    stds = zeros(size(intervalConsistentSimulationResult, 1), size(intervalConsistentSimulationResult{1, 1}, 2));
-    for i=1:size(intervalConsistentSimulationResult, 1)
-        means(i, :) = mean(intervalConsistentSimulationResult{i, 1});
-        stds(i, :) = std(intervalConsistentSimulationResult{i, 1});
+    interpolatedSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
+    means = zeros(size(interpolatedSimulationResult, 1), size(interpolatedSimulationResult{1, 1}, 2));
+    stds = zeros(size(interpolatedSimulationResult, 1), size(interpolatedSimulationResult{1, 1}, 2));
+    for i=1:size(interpolatedSimulationResult, 1)
+        means(i, :) = mean(interpolatedSimulationResult{i, 1});
+        stds(i, :) = std(interpolatedSimulationResult{i, 1});
     end
 
     figure; 

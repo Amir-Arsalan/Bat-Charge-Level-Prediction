@@ -24,7 +24,7 @@ Outputs:
 granularity
 %}
 
-%% Function code starts her
+%% Function code starts here
 
 %Avoid doing the computation for all time granularities
 tempDataRecord = cell(length(timeGranularity), 2);

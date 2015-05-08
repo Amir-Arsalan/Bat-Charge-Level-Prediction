@@ -57,13 +57,8 @@ if(~isempty(plotType))
         elseif(plotType(i) == 2)
             miscPlotSimulationResults(simulationResult, timeGranularity, ~succinct , numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
         elseif(plotType(i) == 3)
-            intervalConsistentSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
-            miscPlotChargeLevelPrediction(initChargeLvl, intervalConsistentSimulationResult, interpolatedOriginalSeqs, numOfDays);
-%             [~, a2] = find(simulationResult{1, 1} <= 75 & simulationResult{1, 1} > 74);
-%             [~, a4] = find(interpolatedOriginalSeqs{1, 1} <= 75 & interpolatedOriginalSeqs{1, 1} > 74);
-%             figure;hist(a4, 288); xlim([0 288])
-%             figure;hist(a2, 288); xlim([0 288])
-%             fitgmdist(a2, 2, 'Options', statset('Maxiter', 200));
+            interpolatedSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
+            miscPlotChargeLevelPrediction(initChargeLvl, interpolatedSimulationResult, interpolatedOriginalSeqs, timeGranularity, numOfDays);
         end
     end
 end

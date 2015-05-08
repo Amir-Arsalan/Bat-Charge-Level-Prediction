@@ -6,6 +6,8 @@ TODOs:
 
 - Start writing the paper
 
+- Write a function for creating flexible legends
+
 - miscPlotChargeLevelPrediction.m:
     - Plot histogram of for different charge levels in different time intervals
 

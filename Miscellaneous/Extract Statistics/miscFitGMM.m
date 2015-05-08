@@ -37,7 +37,7 @@ data only
                   iterNum = str2num(errMsg(end-2:end-1));
                 end
                 [tempMeans(i, :), tempStds(i, :)] = miscRunGMM(data, numOfClusters, max(1, iterNum - 1));
-                fprintf('Ill-posed condition. %s\n', exception.message);
+                fprintf('%s\n', exception.message);
             end
             i = i + 1;
             j = j + 1;

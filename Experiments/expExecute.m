@@ -115,7 +115,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         if(exist('time granulated Data.mat', 'file'))
            if(timeGranularity == 0)
                load('time granulated Data.mat'); %Load all available datasets with different time granularities stored in it
-               timeGranularity = [15, 20, 30]; %The pre-defined time-granularities
+               timeGranularity = [3, 5, 10, 15, 20, 30]; %The pre-defined time-granularities
                timeGranularityIndices = miscLookupTimeGranularity(timeGranulatedDataRecord, timeGranularity);
                timeGranularityIndices = sortrows(timeGranularityIndices, 2); %Sort with respect to the time granularity colummn
                timeGranularity = timeGranularityIndices(:, 2);
@@ -156,7 +156,7 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
         end
     end
     
-    miscPlot(plotType, simulationResult, timeGranularity, succinct, numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
+    miscPlot(plotType, simulationResult, timeGranularity, succinct, numOfDays, initChargeLvl, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
 end
 
 end

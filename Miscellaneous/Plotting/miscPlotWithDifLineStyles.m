@@ -34,7 +34,7 @@ lineStyle = {'-', '--', '-.', '-.o', '--o', ':', 'x', '^', 'v', '-.+', 'd', '-v'
 if(isempty(simulationResult) && isempty(originalResult))
    error('There is no simulation or original battery charge level sequence to plot'); 
 end
-
+i = 1;
 if(~isempty(simulationResult))
     plot(1:size(simulationResult, 2), simulationResult(1, :), lineStyle{1}, 'MarkerSize', 3);
     hold on
@@ -45,16 +45,24 @@ if(~isempty(simulationResult))
 end
 
 if(~isempty(originalResult))
+    if(isempty(i))
+        i = 1;
+    end
     hold on
     if(isempty(simulationResult))
         i = 1;
-        tempIndex = 1;
+        nextPlotTypeIndex = 1;
     else
-        tempIndex = i + 1;
+        nextPlotTypeIndex = i + 1;
     end
-    plot(1:size(originalResult, 2), originalResult(1, :), lineStyle{i + 1}, 'MarkerSize', 3);
+    
+    if(exist('numberOfInstancesToPlot', 'var') && numberOfInstancesToPlot > 1)
+       toPlotInstancesIndex = randi([1, size(originalResult, 1)], numberOfInstancesToPlot, 1);
+    end
+    
+    plot(1:size(originalResult, 2), originalResult(toPlotInstancesIndex(1), :), lineStyle{nextPlotTypeIndex}, 'MarkerSize', 3);
     for i=2:min(numberOfInstancesToPlot, size(originalResult, 1))
-       plot(1:size(originalResult, 2), originalResult(i, :), lineStyle{tempIndex + i - 1}, 'MarkerSize', 3);
+       plot(1:size(originalResult, 2), originalResult(toPlotInstancesIndex(i), :), lineStyle{nextPlotTypeIndex + i - 1}, 'MarkerSize', 3);
     end
     hold off
 end

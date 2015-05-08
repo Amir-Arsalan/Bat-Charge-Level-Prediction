@@ -58,7 +58,7 @@ if(expType == 1)
     elseif(exactMatch == 0) %If not looking for exact matches
            k = 1;
            while(k <= size(labeledDataRecord, 1) - exactNumberOfRequestedIntervals)
-               if(labeledDataRecord(k, 6) - boundary*(timeGranularity/10) < initChargeLvl && labeledDataRecord(k, 6) + boundary*(timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
+               if(labeledDataRecord(k, 7) == 0 && labeledDataRecord(k, 6) - boundary*(timeGranularity/10) < initChargeLvl && labeledDataRecord(k, 6) + boundary*(timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
                    if(miscCheckIndexExceeding(k, exactNumberOfRequestedIntervals, 0, labeledDataRecord))
                       initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), k + 1), end)) = initialDist(labeledDataRecord(min(size(labeledDataRecord, 1), k + 1), end)) + 1;
                       k = k + exactNumberOfRequestedIntervals;

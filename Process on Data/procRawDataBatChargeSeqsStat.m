@@ -54,7 +54,7 @@ if(expType == 1)
            chargeLvlRecordsForOneIndividual = zeros(0, exactNumOfRequiredRecords);
            if(exactMatch == 1)
               exactMatchIndices = (find(granulatedData(:, 6) == initChargeLvl));
-              if(length(exactMatchIndices > 0))
+              if(~isempty(exactMatchIndices))
                   startIndex = exactMatchIndices(1);
                   k = 2;
                    while(k <= length(exactMatchIndices))
@@ -79,7 +79,7 @@ if(expType == 1)
            elseif(exactMatch == 0) %If not looking for exact matches
                k = 1;
                while(k <= size(granulatedData, 1) - exactNumOfRequiredRecords)
-                   if(granulatedData(k, 6) - boundary*(timeGranularity/10) < initChargeLvl && granulatedData(k, 6) + boundary*(timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
+                   if(granulatedData(k, 7) == 0 && granulatedData(k, 6) - boundary * (timeGranularity/10) < initChargeLvl && granulatedData(k, 6) + boundary * (timeGranularity/10) > initChargeLvl) %The 'starting charge level' must be within a bound of initChargeLvl
                        if(miscCheckIndexExceeding(k, exactNumOfRequiredRecords, 0, granulatedData))
                           chargeLvlRecordsForOneIndividual = [chargeLvlRecordsForOneIndividual; granulatedData(k:k + exactNumOfRequiredRecords - 1, 6)'];
                           k = k + exactNumOfRequiredRecords;

@@ -2,9 +2,12 @@
 %{
 TODOs:
 
-05/07/2015:
+05/08/2015:
 
 - Start writing the paper
+
+- miscPlotChargeLevelPrediction.m:
+    - Plot histogram of for different charge levels in different time intervals
 
 - procRawDataBatChargeSeqsStat.m:
     - Identify and remove noisy records
@@ -23,9 +26,6 @@ TODOs:
     - expType == 3: Learn model type 1, but the difference is the observation is
         a GMM instead of one Normal distribution
     - expType = 4: Learn a model for each user
-
-- miscPlotResults.m:
-    - Plot histogram of for different charge levels in different time intervals
     
 ____________________
 

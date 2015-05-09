@@ -89,12 +89,9 @@ elseif(succinct == 1)
 
     figure; 
     miscPlotWithDifLineStyles(means, rawDataRecMean, 14);
-    hold on
-    title(sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
-    xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-    ylabel('Charge Level');
-    ylim([0 100])
+    miscPlotApplySettings([], [0, 100], sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), 'Charge Level', sprintf('Means of simulations and real data with time granularities of %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
 
+    hold on
     theLegendText = strcat(horzcat('''Prediction Mean (', num2str(timeGranularity(1))), ')''');
     for i=2:length(timeGranularity)
     theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction Mean (' ,num2str(timeGranularity(i))))), ')''');
@@ -107,13 +104,9 @@ elseif(succinct == 1)
 
     figure;
     miscPlotWithDifLineStyles(stds, rawDataRecStd, 14);
+    miscPlotApplySettings([], [0, 45], sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), 'Charge Level', sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
+
     hold on
-
-    title(sprintf('Standard Deviations of simulations and real data with time granularities of  %s minutes shown. Not exact + With conditional state dist + With csd for next state + with Smoothing', strcat(strcat('[', num2str(timeGranularity')), ']')))
-    xlabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-    ylabel('Charge Level');
-    ylim([0 45])
-
     theLegendText = strcat(horzcat('''Prediction Std (', num2str(timeGranularity(1))), ')''');
     for i=2:length(timeGranularity)
     theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction Std (' ,num2str(timeGranularity(i))))), ')''');

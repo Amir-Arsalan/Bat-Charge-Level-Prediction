@@ -123,12 +123,14 @@ for i=1:numOfDays
     subplot(2, 2, [3, 4]);
     miscPlotWithDifLineStyles(stdSimulationIntervalsRemainedToGetToChargeLvlFor, stdRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
 
+    miscApplyPlotSettings([], [0, 100], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)));
     hold on
     title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)))
     xlabel('Charge Level');
     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylim([0 100]) %Assuming that the first element of timeGranularity is the smallest one
-
+    
+    hold on
     theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
     for j=2:length(timeGranularity)
     theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');

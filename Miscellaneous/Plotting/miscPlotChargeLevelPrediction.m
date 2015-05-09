@@ -20,7 +20,7 @@ Plotting
 
 %% Function code starts here
 
-if(~exist('from100discharge.mat', 'file'))
+% if(~exist('from100discharge.mat', 'file'))
 simChargeLvlStat = cell(size(interpolatedtSimulationResult, 1), 3); %The first column for mean and the second for standard deviation
 orgChargeLvlStat = cell(size(interpolatedtSimulationResult, 1), 3); %The first column for mean and the second for standard deviation
 numOfDays = round(numOfDays);
@@ -40,23 +40,29 @@ for i=1:size(interpolatedtSimulationResult, 1)
         [~, relevantIndexNumsForInterpolatedRawData] = find(interpolatedOriginalSeqs{i, 1} >= j & interpolatedOriginalSeqs{i, 1} <= j + 1);
         [simChargeLvlStat{i, 1}(j + 1, :), simChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForSimulation, numOfDays);
         [orgChargeLvlStat{i, 1}(j + 1, :), orgChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForInterpolatedRawData, numOfDays);
-        if(flag == 0 && any(isnan(simChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(simChargeLvlStat{i, 2}(j + 1, :))))
+        if(numOfDays > 1 && (flag == 0 && any(isnan(simChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(simChargeLvlStat{i, 2}(j + 1, :)))))
+            [simChargeLvlStat{i, 1}(j + 1, :), simChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForSimulation, numOfDays);
+            flag = 1;
+        elseif(numOfDays == 1 && (isnan(simChargeLvlStat{i, 1}(j + 1, :)) || isnan(simChargeLvlStat{i, 2}(j + 1, :))))
             [simChargeLvlStat{i, 1}(j + 1, :), simChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForSimulation, numOfDays);
             flag = 1;
         end
-        if(flag == 0 && any(isnan(orgChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 2}(j + 1, :))))
+        if(numOfDays > 1 && (flag == 0 && any(isnan(orgChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 2}(j + 1, :)))))
+            [orgChargeLvlStat{i, 1}(j + 1, :), orgChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForInterpolatedRawData, numOfDays);
+            flag = 1;
+        elseif(numOfDays == 1 && (isnan(orgChargeLvlStat{i, 1}(j + 1, :)) || isnan(orgChargeLvlStat{i, 2}(j + 1, :))))
             [orgChargeLvlStat{i, 1}(j + 1, :), orgChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForInterpolatedRawData, numOfDays);
             flag = 1;
         end
-        if(any(isnan(simChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(simChargeLvlStat{i, 2}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 2}(j + 1, :))))
+        if(numOfDays > 1 && (any(isnan(simChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(simChargeLvlStat{i, 2}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 1}(j + 1, :))) || any(isnan(orgChargeLvlStat{i, 2}(j + 1, :)))))
            flag = 1;
         end
         
-        if(flag == 0 && all(~diff(round(simChargeLvlStat{i, 1}(j + 1, :)))) || all(~diff(round(simChargeLvlStat{i, 2}(j + 1, :))))) %If all values in one of the rows of the matrix were the same
+        if(numOfDays > 1 && (flag == 0 && all(~diff(round(simChargeLvlStat{i, 1}(j + 1, :)))) || all(~diff(round(simChargeLvlStat{i, 2}(j + 1, :)))))) %If all values in one of the rows of the matrix were the same
             [simChargeLvlStat{i, 1}(j + 1, :), simChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForSimulation, numOfDays);
             flag = 1;
         end
-        if(flag == 0 && all(~diff(round(orgChargeLvlStat{i, 1}(j + 1, :)))) || all(~diff(round(orgChargeLvlStat{i, 2}(j + 1, :))))) %If all values in one of the rows of the matrix were the same
+        if(numOfDays > 1 && (flag == 0 && all(~diff(round(orgChargeLvlStat{i, 1}(j + 1, :)))) || all(~diff(round(orgChargeLvlStat{i, 2}(j + 1, :)))))) %If all values in one of the rows of the matrix were the same
             [orgChargeLvlStat{i, 1}(j + 1, :), orgChargeLvlStat{i, 2}(j + 1, :)] = miscFitGMM(relevantIndexNumsForInterpolatedRawData, numOfDays);
             flag = 1;
         end
@@ -75,9 +81,9 @@ catch
     miscPlotChargeLevelPrediction(initChargeLvl, interpolatedtSimulationResult, interpolatedOriginalSeqs, timeGranularity, numOfDays);
 end
 
-end
+% end
 
-load('from100discharge.mat');
+% load('from100discharge.mat');
 
 simRes = cell(numOfDays, 1);
 meanSimulationIntervalsRemainedToGetToChargeLvlFor = zeros(size(simChargeLvlStat, 1), 100);
@@ -99,7 +105,7 @@ for i=1:numOfDays
     miscPlotWithDifLineStyles(meanSimulationIntervalsRemainedToGetToChargeLvlFor, meanRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
     
     hold on
-    title(sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s day(s) Shown for Time Granularities of %s Minutes for', num2str(i), strcat(strcat('[', num2str(timeGranularity')), ']')))
+    title(sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')))
     xlabel('Charge Level');
     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylim([0 numOfDays*1440/timeGranularity(1)]) %Assuming that the first element of timeGranularity is the smallest one
@@ -118,7 +124,7 @@ for i=1:numOfDays
     miscPlotWithDifLineStyles(stdSimulationIntervalsRemainedToGetToChargeLvlFor, stdRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
 
     hold on
-    title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularities of %s Minutes for the Next %s day(s)', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i)))
+    title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)))
     xlabel('Charge Level');
     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
     ylim([0 100]) %Assuming that the first element of timeGranularity is the smallest one
@@ -132,7 +138,6 @@ for i=1:numOfDays
     end
     eval(['legend(', theLegendText, ', ''Location'', ''Northeast'');']);
     hold off
-    
 end
 
 end

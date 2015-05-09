@@ -17,6 +17,13 @@ data only
 %}
         
         %% The function code stars here
+        
+        flag = 0;
+        if(numOfClusters == 1)
+            %In case of numOfCluster == 1 the std becomes zero (usually) and therefore NaN's or empty matrices are returned. This if prevents this happening
+            flag = 1;
+            numOfClusters = 3; %Temporarily
+        end
         tempMeans = zeros(9, numOfClusters);
         tempStds = zeros(9, numOfClusters);
         sortIndices = zeros(1, numOfClusters);
@@ -51,7 +58,12 @@ data only
         tempStds(toRemoveIndices, :) = [];
         tempMeans(toRemoveIndices, :) = [];
         
-        means = mean(tempMeans);
-        stds = mean(tempStds);
+        if(flag == 0)
+            means = mean(tempMeans);
+            stds = mean(tempStds);
+        else
+            means = mean(tempMeans(:, 1));
+            stds = mean(tempStds(:, 1));
+        end
         warning('on');
 end

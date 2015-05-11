@@ -77,7 +77,7 @@ for i=1:size(interpolatedtSimulationResult, 1)
     orgChargeLvlStat{i, 3} = timeGranularity(i);
 end
 catch
-    warning('Unable to fit GMMs, trying again');
+    warning('Unable to fit GMMs, re-trying again');
     miscPlotChargeLevelPrediction(initChargeLvl, interpolatedtSimulationResult, interpolatedOriginalSeqs, timeGranularity, numOfDays);
 end
 
@@ -104,12 +104,14 @@ for i=1:numOfDays
     figure; subplot(2, 2, [1, 2])
     miscPlotWithDifLineStyles(meanSimulationIntervalsRemainedToGetToChargeLvlFor, meanRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
     
-    hold on
-    title(sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')))
-    xlabel('Charge Level');
-    ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-    ylim([0 numOfDays*1440/timeGranularity(1)]) %Assuming that the first element of timeGranularity is the smallest one
+    miscPlotApplySettings([], [0, numOfDays*1440/timeGranularity(1)], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')));
+%     hold on
+%     title(sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')))
+%     xlabel('Charge Level');
+%     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
+%     ylim([0 numOfDays*1440/timeGranularity(1)]) %Assuming that the first element of timeGranularity is the smallest one
 
+    hold on
     theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
     for j=2:length(timeGranularity)
     theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');
@@ -123,12 +125,12 @@ for i=1:numOfDays
     subplot(2, 2, [3, 4]);
     miscPlotWithDifLineStyles(stdSimulationIntervalsRemainedToGetToChargeLvlFor, stdRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
 
-    miscApplyPlotSettings([], [0, 100], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)));
-    hold on
-    title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)))
-    xlabel('Charge Level');
-    ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-    ylim([0 100]) %Assuming that the first element of timeGranularity is the smallest one
+    miscPlotApplySettings([], [0, 100], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)));
+%     hold on
+%     title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)))
+%     xlabel('Charge Level');
+%     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
+%     ylim([0 100]) %Assuming that the first element of timeGranularity is the smallest one
     
     hold on
     theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');

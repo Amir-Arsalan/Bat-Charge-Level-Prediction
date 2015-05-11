@@ -1,4 +1,4 @@
-function combinedDatarecords = combineUserRecords(userData)
+function combinedDatarecords = procCombineUserRecords(userData)
 
 %{
 This functions concatenates/combines all the battery charge level sequence data.

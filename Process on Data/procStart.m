@@ -31,12 +31,12 @@ for j=1:size(rawDataRecords, 1)
    end
 end
 deviceIndx = find(acceptableDevices); %The value will be used to store the indices in the "dataset" belonging to devices having more than 20 days of record; it is initially assigned a dummy value.
-timeGranulatedDataRecord = cell(10, 2);
-    for j=1:10
-        aggregatedUserBatRecord = combineUserRecords(rawDataRecords{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
+timeGranulatedDataRecord = cell(sum(acceptableDevices), 2);
+    for j=1:sum(acceptableDevices)
+        aggregatedUserBatRecord = procCombineUserRecords(rawDataRecords{deviceIndx(j), batCol}); %Combines all battery charge level records of a user into a single matrix
 %         [charge, discharge, timeIrregularBatRecord, timeGranulatedBatRecord] = extractBatStats(userBatRecord, granularity); %The returned data set has an additional column "days" containing the number of day in which the data has been recorded
-        timeIrregularRecords = cleanData(aggregatedUserBatRecord, 4, false);
-        timeGranulatedBatRecord = applyGranularity(timeIrregularRecords, timeGranularity); %Apply the requested time-granularity on the userBatRecord records
+        timeIrregularRecords = procCleanData(aggregatedUserBatRecord, 4, false);
+        timeGranulatedBatRecord = procApplyGranularity(timeIrregularRecords, timeGranularity); %Apply the requested time-granularity on the userBatRecord records
     %     timeGranulatedDataset{j, 1} = charge;
     %     timeGranulatedDataset{j, 2} = discharge;
     %     timeGranulatedDataset{j, 3} = originalBatRecord;

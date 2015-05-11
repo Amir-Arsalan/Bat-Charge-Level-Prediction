@@ -1,4 +1,4 @@
-function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, numOfDays, plotType)
+function simulationResult = expExecute(fromScratch, expType, timeGranularity, initChargeLvl, initState, numOfDays, plotType)
 
 %{
 This function is used to run different experiments. It is assumed that the
@@ -13,6 +13,8 @@ already stored.
 granularity(ies) at which the expriments will run. If is set to zero the 
 experiments will run for  time granularities of 3, 5, 10, 15, 20 and 30 minutes.
 - initChargeLvl: The initial charge level from which the simulations start
+- initState: Takes on values 0 or 1. It specifies the initial phone's 
+charging state: if 1 the phone is charging and 0 otherwise
 - numOfDays: A posotive, preferably integer, quantity that specifies the 
 number of days for which the simulation will run
 - plotType: It is a single quantity or a vector to determine the type of 
@@ -29,6 +31,11 @@ data and using it for simulation
 
 exactMatch = 0;
 succinct = 1;
+
+if(~exist('initState', 'var') || isempty(initState))
+    warning('The ''initState'' variable has not been assigned any value. Continuing the experiment with experiment type ''1''');
+   expType = 1;
+end
 
 if(numOfDays <= 0)
     numOfDays = 1;
@@ -139,10 +146,10 @@ if(fromScratch == 1 || fromScratch == 0) %Ensure it is assigned a logical quanti
                    timeGranularityIndices = timeGranularityIndices(:, 1);
                    HMMmodel = cell(length(timeGranularity), 2);
                    simulationResult = cell(length(timeGranularity), 2);
-                   [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays);
+                   [rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs] = procRawDataBatChargeSeqsStat(timeGranulatedDataRecord, timeGranularity, initChargeLvl, initState, exactMatch, expType, numOfDays);
                    for i=1:length(timeGranularityIndices)
                        numOfSimulation = size(interpolatedOriginalSeqs{i, 1}, 1);
-                       HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, exactMatch, numOfDays);
+                       HMMmodel{i, 1} = genHMM(timeGranulatedDataRecord{timeGranularityIndices(i), 1}, timeGranularity(i), expType, initChargeLvl, initState, exactMatch, numOfDays);
                        HMMmodel{i, 2} = timeGranularity(i);
                        simulationResult{i, 1} = expHMM(initChargeLvl, HMMmodel{i, 1}, timeGranularity(i), numOfSimulation, numOfDays);
                        simulationResult{i, 2} = timeGranularity(i);

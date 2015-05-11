@@ -57,6 +57,7 @@ if(~isempty(plotType))
         elseif(plotType(i) == 2)
             miscPlotSimulationResults(simulationResult, timeGranularity, ~succinct , numOfDays, rawDataRecMean, rawDataRecStd, interpolatedOriginalSeqs);
         elseif(plotType(i) == 3)
+            warning('Plotting prediction results against raw data results starting from %d charge level and for %d days. Running GMM (Gaussian mixture model) might take some time; Please be patient', initChargeLvl, numOfDays);
             interpolatedSimulationResult = procGenerateIntervalConsistentDataRecord(simulationResult, timeGranularity, numOfDays);
             miscPlotChargeLevelPrediction(initChargeLvl, interpolatedSimulationResult, interpolatedOriginalSeqs, timeGranularity, numOfDays);
         end

@@ -8,8 +8,8 @@ TODOs:
 
 - Write a function for creating flexible legends
 
-- miscPlotChargeLevelPrediction.m:
-    - Plot histogram of for different charge levels in different time intervals
+- miscPlot.m:
+    - Titles must show the experiment type
 
 - procRawDataBatChargeSeqsStat.m:
     - Identify and remove noisy records

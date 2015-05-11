@@ -1,4 +1,4 @@
-function userBatRecord = applyGranularity(userBatRecord, granularity)
+function userBatRecord = procApplyGranularity(userBatRecord, granularity)
 
 %{
 

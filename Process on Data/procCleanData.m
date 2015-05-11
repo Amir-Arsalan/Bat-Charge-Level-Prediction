@@ -1,4 +1,4 @@
-function userBatRecord = cleanData(userBatRecord, iterations, duplicate)
+function userBatRecord = procCleanData(userBatRecord, iterations, duplicate)
 %This function does pre-processing on the set of input records as follow:
 %{
 1- Replaces charging status by 0 or 1 depending on previous rows and

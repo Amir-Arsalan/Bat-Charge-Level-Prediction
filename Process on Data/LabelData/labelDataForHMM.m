@@ -16,7 +16,7 @@ of model to be learned over the data
 
 %% Function code starts here
 
-if(expType == 1) %Tag each single record (No hierarchy has done for this model)
+if(expType == 1 || expType == 2) %These two models are explained in genHMM.m
     
     allUsersDataRecords = [];
     dischargeRates = [];
@@ -84,6 +84,14 @@ if(expType == 1) %Tag each single record (No hierarchy has done for this model)
     tempIndex = allUsersDataRecords(:, 7) == 1 & allUsersDataRecords(:, 9) < -6.5/(10/timeGranularity); % The device is being charged 
     allUsersDataRecords(tempIndex, 10) = 12;
     
+% %     This code snippet is used to replace incorrect charging status with
+% %     the correct one. For instance, for a certain record, the phone 
+% %     might have been in charging status but the charging status might be
+% %     discharge or vice versa.
+
+% %     Note: The last code section in the procApplyGranularity function
+% %     deals with this problem. Therefore I have commented this code
+% %     snippet here
     
 %     dischargeIndices = find(allUsersData(:, 7) == 0);
 %     rechargeIndices = find(allUsersData(:, 7) == 1);
@@ -121,8 +129,7 @@ if(expType == 1) %Tag each single record (No hierarchy has done for this model)
 %     
 %     reMean = mean(rechargeRates); %Rescharge rate mean
 %     reStd = std(rechargeRates); %Recharge rate standard deviation
-    
-    
+
     % Start tagging records
     
     labeledDataRecords = allUsersDataRecords;

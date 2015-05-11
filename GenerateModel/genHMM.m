@@ -1,4 +1,4 @@
-function model = genHMM(timeGranulatedDataRecord, timeGranularity, expType, initChargeLvl, exactMatch, numOfDays)
+function model = genHMM(timeGranulatedDataRecord, timeGranularity, expType, initChargeLvl, initState, exactMatch, numOfDays)
 
 %{
 This function generates a model to be used for simulation porpuses later
@@ -18,6 +18,8 @@ record
 
 - initChargeLvl: The initial charge level from which the user battery 
 charge level sequence extraction begins
+- initState: Takes on values 0 or 1. It specifies the initial phone's 
+charging state: if 1 the phone is charging and 0 otherwise
 - exactMatch: Takes on values of 1 or 0. If 1 the function select the 'start
 charge levels' equal to initChargeLvl exactly. If not, the function selects
 the 'start charge levels' with a boundary of initChargeLvl.
@@ -27,7 +29,10 @@ number of days for which the simulation will run
 %}
 
 %% The code section for generating a model
-if(expType == 1) %First model (a simple HMM with 12 states)
+
+[labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
+
+if(expType == 1 || expType == 2) %First two models (a simple HMM with 12 states)
     %{
     Discharge states:
         (1) Shutdown: When the discharge rate (9th column of the users data
@@ -50,13 +55,12 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         (10) Early recharge state/getting fully charged: When the rescharge rate is <= -0.5/(10/granularity) & >= -3/(10/granularity)
         (11) About to get fully charged: When the recharge rate is < -3/(10/granularity) & >= -6.5/(10/granularity)
         (12) About to get fully charged: When the recharge rate is < -6.5/(10/granularity)
+    
+    Note: If expType == 2 then the HMM's initial distribution vector is 
+    conditioned on the initial charging status (determined by initState
+    variable)
     %}
-    
-    if(timeGranularity == 30)
-        
-    end
-    [labeledDataRecord, usersIndex] = labelDataForHMM(timeGranulatedDataRecord, timeGranularity, expType);
-    
+
     numOfStates = 12;
     
     transitionMatrix = zeros(numOfStates, numOfStates);
@@ -72,7 +76,9 @@ if(expType == 1) %First model (a simple HMM with 12 states)
         singleUserData = labeledDataRecord(usersIndex(i) + 1:usersIndex(i + 1), :);
         labels = double(singleUserData(:, end));
         
-        initialDist(labels(1)) = initialDist(labels(1)) + 1;
+%         if(expType == 1)
+%             initialDist(labels(1)) = initialDist(labels(1)) + 1;
+%         end
         
         for j=1:size(labels, 1) - 1
             transitionMatrix(labels(j), labels(j + 1)) = transitionMatrix(labels(j), labels(j + 1)) + 1;
@@ -84,7 +90,9 @@ if(expType == 1) %First model (a simple HMM with 12 states)
 
     end
     
-    initialDist = initialDist / sum(initialDist);
+%     if(expType == 1)
+%         initialDist = initialDist / sum(initialDist);
+%     end
     
     for i=1:size(transitionMatrix, 1)
         %START Prevent NaN probability distribution vectors, if any
@@ -99,7 +107,9 @@ if(expType == 1) %First model (a simple HMM with 12 states)
        transitionMatrix(i, :) = transitionMatrix(i, :) / sum(transitionMatrix(i, :)); 
     end
     
-    initialDist = procCalcInitialDistVector(labeledDataRecord, timeGranularity, initChargeLvl, exactMatch, expType, numOfDays); %This line of code replaces the previous 'initialDist' with a new one which depends on the initial battery charge level for simulation
+%     if(expType == 2)
+        initialDist = procCalcInitialDistVector(labeledDataRecord, timeGranularity, initChargeLvl, initState, exactMatch, expType, numOfDays); %This line of code replaces the previous 'initialDist' with a new one which depends on the initial battery charge level for simulation
+%     end
     model{1, 1} = transitionMatrix;
     model{1, 2} = emission;
     model{1, 3} = initialDist;

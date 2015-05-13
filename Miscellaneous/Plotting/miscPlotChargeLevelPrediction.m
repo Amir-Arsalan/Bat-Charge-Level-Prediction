@@ -77,6 +77,7 @@ for i=1:size(interpolatedtSimulationResult, 1)
     orgChargeLvlStat{i, 3} = timeGranularity(i);
 end
 catch
+    flag = 2;
     warning('Unable to fit GMMs, re-trying again');
     miscPlotChargeLevelPrediction(initChargeLvl, interpolatedtSimulationResult, interpolatedOriginalSeqs, timeGranularity, numOfDays);
 end
@@ -84,64 +85,59 @@ end
 % end
 
 % load('from100discharge.mat');
-
-simRes = cell(numOfDays, 1);
-meanSimulationIntervalsRemainedToGetToChargeLvlFor = zeros(size(simChargeLvlStat, 1), 100);
-stdSimulationIntervalsRemainedToGetToChargeLvlFor = zeros(size(simChargeLvlStat, 1), 100);
-
-meanRawDataIntervalsRemainedToGetToChargeLvlFor = zeros(size(orgChargeLvlStat, 1), 100);
-stdRawDataIntervalsRemainedToGetToChargeLvlFor = zeros(size(orgChargeLvlStat, 1), 100);
-
-for i=1:numOfDays
-    for j=1:size(simChargeLvlStat, 1)
-        meanSimulationIntervalsRemainedToGetToChargeLvlFor(j, :) = simChargeLvlStat{j, 1}(:, i)';
-        stdSimulationIntervalsRemainedToGetToChargeLvlFor(j, :) = simChargeLvlStat{j, 2}(:, i)';
-        
-        meanRawDataIntervalsRemainedToGetToChargeLvlFor(j, :) = orgChargeLvlStat{j, 1}(:, i)';
-        stdRawDataIntervalsRemainedToGetToChargeLvlFor(j, :) = orgChargeLvlStat{j, 2}(:, i)';
-    end
+if(flag == 0)
     
-    figure; subplot(2, 2, [1, 2])
-    miscPlotWithDifLineStyles(meanSimulationIntervalsRemainedToGetToChargeLvlFor, meanRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
-    
-    miscPlotApplySettings([], [0, numOfDays*1440/timeGranularity(1)], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')));
-%     hold on
-%     title(sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')))
-%     xlabel('Charge Level');
-%     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-%     ylim([0 numOfDays*1440/timeGranularity(1)]) %Assuming that the first element of timeGranularity is the smallest one
+    simRes = cell(numOfDays, 1);
+    meanSimulationIntervalsRemainedToGetToChargeLvlFor = zeros(size(simChargeLvlStat, 1), 100);
+    stdSimulationIntervalsRemainedToGetToChargeLvlFor = zeros(size(simChargeLvlStat, 1), 100);
 
-    hold on
-    theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
-    for j=2:length(timeGranularity)
-    theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');
-    end
-    for j=1:size(orgChargeLvlStat, 1)
-        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data(' ,num2str(timeGranularity(j))))), ')''');
-    end
-    eval(['legend(', theLegendText, ', ''Location'', ''Northeast'');']);
-    hold off
-    
-    subplot(2, 2, [3, 4]);
-    miscPlotWithDifLineStyles(stdSimulationIntervalsRemainedToGetToChargeLvlFor, stdRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
+    meanRawDataIntervalsRemainedToGetToChargeLvlFor = zeros(size(orgChargeLvlStat, 1), 100);
+    stdRawDataIntervalsRemainedToGetToChargeLvlFor = zeros(size(orgChargeLvlStat, 1), 100);
 
-    miscPlotApplySettings([], [0, 100], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)));
-%     hold on
-%     title(sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)))
-%     xlabel('Charge Level');
-%     ylabel(sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)));
-%     ylim([0 100]) %Assuming that the first element of timeGranularity is the smallest one
+    for i=1:numOfDays
+        for j=1:size(simChargeLvlStat, 1)
+            meanSimulationIntervalsRemainedToGetToChargeLvlFor(j, :) = simChargeLvlStat{j, 1}(:, i)';
+            stdSimulationIntervalsRemainedToGetToChargeLvlFor(j, :) = simChargeLvlStat{j, 2}(:, i)';
+
+            meanRawDataIntervalsRemainedToGetToChargeLvlFor(j, :) = orgChargeLvlStat{j, 1}(:, i)';
+            stdRawDataIntervalsRemainedToGetToChargeLvlFor(j, :) = orgChargeLvlStat{j, 2}(:, i)';
+        end
+
+        figure; subplot(2, 2, [1, 2])
+        miscPlotWithDifLineStyles(meanSimulationIntervalsRemainedToGetToChargeLvlFor, meanRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
+
+        miscPlotApplySettings([], [0, numOfDays*1440/timeGranularity(1)], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Expected Number of Intervals to Reach a Specific Charge Level in the Next %s hours Shown for Time Granularity(ies) of %s Minutes', num2str((i * 24)), strcat(strcat('[', num2str(timeGranularity')), ']')));
+
+        hold on
+        theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
+        for j=2:length(timeGranularity)
+        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');
+        end
+        for j=1:size(orgChargeLvlStat, 1)
+            theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data(' ,num2str(timeGranularity(j))))), ')''');
+        end
+        eval(['legend(', theLegendText, ', ''Location'', ''Northeast'');']);
+        hold off
+
+        subplot(2, 2, [3, 4]);
+        miscPlotWithDifLineStyles(stdSimulationIntervalsRemainedToGetToChargeLvlFor, stdRawDataIntervalsRemainedToGetToChargeLvlFor, 14);
+
+        miscPlotApplySettings([], [0, 100], 'Charge Level', sprintf('Time intervals (each interval is %d minutes)', timeGranularity(1)), sprintf('Standard Deviations Intervals to Reach a Specific Charge Level Shown for Time Granularity(ies) of %s Minutes for the Next %s hours', strcat(strcat('[', num2str(timeGranularity')), ']'), num2str(i * 24)));
     
-    hold on
-    theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
-    for j=2:length(timeGranularity)
-    theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');
+        hold on
+        theLegendText = strcat(horzcat('''Prediction(', num2str(timeGranularity(1))), ')''');
+        for j=2:length(timeGranularity)
+        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Prediction(' ,num2str(timeGranularity(j))))), ')''');
+        end
+        for j=1:size(orgChargeLvlStat, 1)
+            theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data(' ,num2str(timeGranularity(j))))), ')''');
+        end
+        eval(['legend(', theLegendText, ', ''Location'', ''Northeast'');']);
+        hold off
     end
-    for j=1:size(orgChargeLvlStat, 1)
-        theLegendText = strcat(strcat(theLegendText, strcat(', ''', horzcat('Raw Data(' ,num2str(timeGranularity(j))))), ')''');
-    end
-    eval(['legend(', theLegendText, ', ''Location'', ''Northeast'');']);
-    hold off
+
+else
+    warning('Failed to fit GMM to either the prediction or the raw data records. Cannot execute plot type ''3''');    
 end
 
 end

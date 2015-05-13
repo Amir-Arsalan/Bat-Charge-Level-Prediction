@@ -2,7 +2,28 @@
 %{
 TODOs:
 
-05/10/2015:
+05/13/2015:
+
+- Research Directions/Impacts:
+    - Biometrics:
+        - Identifying users given a battery charge level sequence
+
+    - Machine Learning:
+        - Maybe something new for inference
+        - Applicability of such methods for non-linear regression problems
+
+    - Application:
+        - Increase the trust level of mobile users on prediction algorithms
+        - Applications in other fields
+        - 
+
+- Implement exact inference methods:
+    - Possible challenge: Continuous observation variable
+    - Possible challenge: GMM as the observation
+    - Possible challenge: The length of observations (should I use approx.
+    inference methods?)
+    - Compare the distance between real data states vs. generated states
+    after applying the inference
 
 - Start writing the paper
 
@@ -66,6 +87,7 @@ ____________________
 - Missing value problem:
     - Fill the missing values with learned model
 
-- Maybe later sometime:
-    - Create a separate plot function that gets plot() arguments with the goal of making the code more readable
+- Maybe sometime in the future:
+    - (Done) Create a separate plot function that gets plot() arguments
+    with the goal of making the code more readable (miscPlot.m)
 %}

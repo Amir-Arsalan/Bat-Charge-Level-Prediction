@@ -2,7 +2,10 @@
 %{
 TODOs:
 
-05/13/2015:
+05/18/2015:
+
+- intFunction:
+    - Start writing code for it!
 
 - Research Directions/Impacts:
     - Biometrics:
@@ -17,13 +20,13 @@ TODOs:
         - Applications in other fields
         - 
 
-- Implement exact inference methods:
+- Implement inference techniques:
     - Possible challenge: Continuous observation variable
     - Possible challenge: GMM as the observation
     - Possible challenge: The length of observations (should I use approx.
     inference methods?)
-    - Compare the distance between real data states vs. generated states
-    after applying the inference
+    - Compute the loss based on the deviation of real data states vs. 
+    generated states of Viterbi algorithm
 
 - Start writing the paper
 
